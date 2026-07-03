@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>NAMUX.COM 리뉴얼 — 데모 인덱스</title>
+<title>NAMUX.COM 리뉴얼 — AS-IS↔TO-BE 비교 데모 (0701)</title>
 
 <link rel="stylesheet" href="_ds/namuh-x-design-system-7766e90e-e112-40a0-bb7f-0cb3e4bb5396/tokens/fonts.css" />
 <link rel="stylesheet" href="_ds/namuh-x-design-system-7766e90e-e112-40a0-bb7f-0cb3e4bb5396/tokens/colors.css" />
@@ -16,172 +16,38 @@
   html, body { margin: 0; padding: 0; }
   body {
     font-family: var(--font-sans);
-    background: var(--dark-bg);
-    color: rgba(255,255,255,.82);
+    background: var(--surface-page);
+    color: var(--text-body);
     -webkit-font-smoothing: antialiased;
-    min-height: 100vh;
   }
-  a { color: inherit; text-decoration: none; }
+  a { color: inherit; }
   ::selection { background: var(--ws-mint); color: var(--ws-black); }
-
-  /* faint equalizer wave backdrop */
-  .bg-wave {
-    position: fixed; inset: 0; z-index: 0; pointer-events: none;
-    display: flex; align-items: flex-end; gap: 10px;
-    padding: 0 4vw; opacity: .06;
-    background:
-      radial-gradient(120% 80% at 50% -10%, rgba(133,225,210,.18), transparent 60%);
-  }
-  .bg-wave span {
-    flex: 1; background: var(--ws-mint); border-radius: 6px 6px 0 0;
-    animation: eq 3.4s ease-in-out infinite;
-  }
-  @keyframes eq { 0%,100% { height: 12%; } 50% { height: 62%; } }
-
-  .wrap { position: relative; z-index: 1; max-width: 1120px; margin: 0 auto; padding: 72px 40px 96px; }
-
-  header.top { margin-bottom: 52px; }
-  .wordmark { display: flex; align-items: baseline; gap: 3px; font-weight: 700; letter-spacing: -.02em; font-size: 22px; color: #fff; }
-  .wordmark .x { color: var(--ws-mint); font-size: 15px; transform: translateY(-8px); }
-  .eyebrow { margin: 28px 0 12px; font-size: 12px; letter-spacing: .32em; text-transform: uppercase; color: var(--ws-mint); font-weight: 700; }
-  h1 { margin: 0; font-size: 44px; line-height: 1.14; letter-spacing: -.022em; color: #fff; font-weight: 700; }
-  h1 .dim { color: rgba(255,255,255,.42); }
-  .sub { margin: 18px 0 0; font-size: 16px; line-height: 1.62; color: rgba(255,255,255,.6); max-width: 640px; }
-
-  .grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 22px; margin-top: 44px; }
-
-  .card {
-    position: relative; display: flex; flex-direction: column;
-    background: var(--dark-surface); border: 1px solid rgba(255,255,255,.10);
-    border-radius: 20px; overflow: hidden;
-    transition: transform .24s cubic-bezier(.22,.61,.36,1), border-color .24s, box-shadow .24s;
-  }
-  .card:hover { transform: translateY(-4px); border-color: rgba(133,225,210,.55); box-shadow: 0 22px 60px rgba(0,0,0,.5), 0 0 0 1px rgba(133,225,210,.25); }
-  .card.wide { grid-column: 1 / -1; }
-
-  .thumb { position: relative; background: #0b0d10; border-bottom: 1px solid rgba(255,255,255,.08); overflow: hidden; }
-  .card:not(.wide) .thumb { height: 232px; }
-  .card.wide .thumb { height: 300px; }
-  .thumb iframe {
-    position: absolute; top: 0; left: 0;
-    width: 1440px; border: 0;
-    transform-origin: top left; pointer-events: none;
-  }
-  .thumb .veil { position: absolute; inset: 0; background: linear-gradient(180deg, transparent 55%, rgba(8,9,11,.5)); }
-
-  .badge { position: absolute; top: 14px; left: 14px; z-index: 2; font-size: 11px; font-weight: 700; letter-spacing: .06em; padding: 5px 11px; border-radius: 999px; white-space: nowrap; }
-  .badge.main { background: var(--ws-mint); color: var(--ws-black); }
-  .badge.screen { background: rgba(255,255,255,.14); color: #fff; border: 1px solid rgba(255,255,255,.2); }
-  .badge.legacy { background: rgba(255,255,255,.06); color: rgba(255,255,255,.62); border: 1px solid rgba(255,255,255,.16); }
-
-  .body { padding: 22px 24px 24px; display: flex; flex-direction: column; gap: 8px; flex: 1; }
-  .card h3 { margin: 0; font-size: 19px; letter-spacing: -.01em; color: #fff; font-weight: 700; }
-  .card p { margin: 0; font-size: 14px; line-height: 1.6; color: rgba(255,255,255,.58); }
-  .go { margin-top: 14px; display: inline-flex; align-items: center; gap: 8px; font-size: 14px; font-weight: 700; color: var(--ws-mint); }
-  .go svg { transition: transform .24s; }
-  .card:hover .go svg { transform: translateX(4px); }
-
-  footer.foot { margin-top: 56px; padding-top: 24px; border-top: 1px solid rgba(255,255,255,.08); font-size: 12.5px; color: rgba(255,255,255,.4); line-height: 1.7; }
-
-  @media (max-width: 760px) {
-    .wrap { padding: 48px 20px 72px; }
-    h1 { font-size: 32px; }
-    .grid { grid-template-columns: 1fr; }
-    .card:not(.wide) .thumb, .card.wide .thumb { height: 200px; }
-  }
+  @keyframes hf-pop { from { opacity: 0; transform: translateX(-50%) translateY(-6px); } to { opacity: 1; transform: translateX(-50%) translateY(0); } }
+  @keyframes hf-box { 0% { opacity: 0; transform: scale(1.04); } 55% { opacity: 1; } 100% { opacity: 1; transform: scale(1); } }
+  @keyframes hf-mark { from { opacity: 0; transform: scale(.8); } to { opacity: 1; transform: scale(1); } }
+  @keyframes hf-ring { 0% { transform: scale(.7); opacity: .75; } 70% { transform: scale(1.6); opacity: 0; } 100% { opacity: 0; } }
+  @keyframes rb-cta { 0%,100% { box-shadow: 0 14px 40px rgba(133,225,210,.45); } 50% { box-shadow: 0 16px 52px rgba(133,225,210,.75); } }
+  @keyframes rb-cta-ring { 0% { transform: scale(1); opacity: .55; } 70% { transform: scale(1.18); opacity: 0; } 100% { opacity: 0; } }
+  @keyframes rb-cta-arrow { 0%,100% { transform: translateY(0); } 50% { transform: translateY(3px); } }
+  @keyframes rb-pulse { 0% { transform: scale(.82); opacity: 0; } 24% { opacity: .9; } 100% { transform: scale(1.18); opacity: 0; } }
+  @keyframes rb-blink { 0%,92%,100% { transform: scaleY(1); } 96% { transform: scaleY(.1); } }
+  @keyframes rb-scan { 0% { top: 10%; } 50% { top: 86%; } 100% { top: 10%; } }
+  @keyframes rb-rise { from { transform: translateY(4px); opacity: .55; } to { transform: translateY(-3px); opacity: 1; } }
+  @keyframes rb-node { 0% { transform: translate(-50%,-50%) scale(.6); opacity: .35; } 40% { transform: translate(-50%,-50%) scale(1.25); opacity: 1; } 100% { transform: translate(-50%,-50%) scale(1); opacity: .9; } }
 </style>
 </head>
 <body>
-<div class="bg-wave" id="bgwave" aria-hidden="true"></div>
+<div id="root"></div>
 
-<div class="wrap">
-  <header class="top">
-    <div class="wordmark">NAMUH<span class="x">X</span></div>
-    <div class="eyebrow">Renewal Demo · namux.com</div>
-    <h1>NAMUX.COM 리뉴얼<br><span class="dim">AS-IS ↔ TO-BE 데모 인덱스</span></h1>
-    <p class="sub">고도몰(AS-IS)에서 새롭게 오픈하는 구독 커머스 플랫폼(TO-BE)으로의 리뉴얼을 한자리에서 확인하는 데모 모음입니다. 아래 카드에서 각 페이지로 이동하세요.</p>
-  </header>
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
 
-  <div class="grid">
+<script src="_ds/namuh-x-design-system-7766e90e-e112-40a0-bb7f-0cb3e4bb5396/_ds_bundle.js"></script>
 
-    <a class="card wide" href="20260701.html">
-      <div class="thumb">
-        <span class="badge main">MAIN DEMO</span>
-        <iframe src="20260701.html" loading="lazy" scrolling="no" tabindex="-1" title="비교 데모 프리뷰"></iframe>
-        <div class="veil"></div>
-      </div>
-      <div class="body">
-        <h3>AS-IS ↔ TO-BE 비교 데모</h3>
-        <p>고도몰과 리뉴얼을 토글 버튼으로 전환하며 전체 GNB(로봇·스토어·브랜드·고객지원·함께 만드는 로봇 시대)와 각 화면을 비교하는 통합 데모입니다. 화면 설명·전체화면 보기 포함.</p>
-        <span class="go">데모 열기
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
-        </span>
-      </div>
-    </a>
-
-    <a class="card" href="robotB.html">
-      <div class="thumb">
-        <span class="badge screen">개별 화면</span>
-        <iframe src="robotB.html" loading="lazy" scrolling="no" tabindex="-1" title="로봇 페이지 프리뷰"></iframe>
-        <div class="veil"></div>
-      </div>
-      <div class="body">
-        <h3>로봇 — 처음 만나는 웰니스 로봇</h3>
-        <p>리뉴얼 로봇 소개 페이지(Type B) 단독 실행본. 비교 데모 안에 임베드된 라이브 화면과 동일합니다.</p>
-        <span class="go">화면 열기
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
-        </span>
-      </div>
-    </a>
-
-    <a class="card" href="Canvas.dc.html">
-      <div class="thumb">
-        <span class="badge legacy">참고 · 구버전</span>
-        <iframe src="Canvas.dc.html" loading="lazy" scrolling="no" tabindex="-1" title="초기 캔버스 프리뷰"></iframe>
-        <div class="veil"></div>
-      </div>
-      <div class="body">
-        <h3>초기 비교 캔버스</h3>
-        <p>초기 단계의 AS-IS/TO-BE 비교 캔버스 버전입니다. 진행 이력 참고용으로 보관합니다.</p>
-        <span class="go">캔버스 열기
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
-        </span>
-      </div>
-    </a>
-
-  </div>
-
-  <footer class="foot">
-    NAMUH X · Wellness Robotics — 리뉴얼 데모 인덱스<br>
-    로봇 단독 화면의 백업본(<code>로봇 - 처음 만나는 웰니스 로봇 (TypeB).html</code>)은 별도 보관되어 있으며, 위 “로봇” 카드와 내용이 동일합니다.
-  </footer>
-</div>
-
-<script>
-  // build equalizer bars
-  (function () {
-    var wave = document.getElementById('bgwave');
-    for (var i = 0; i < 48; i++) {
-      var s = document.createElement('span');
-      s.style.animationDelay = (-(Math.random() * 3.4)).toFixed(2) + 's';
-      s.style.animationDuration = (2.4 + Math.random() * 2).toFixed(2) + 's';
-      wave.appendChild(s);
-    }
-  })();
-
-  // scale live iframe previews to fit their thumb container
-  function fitThumbs() {
-    document.querySelectorAll('.thumb').forEach(function (t) {
-      var f = t.querySelector('iframe');
-      if (!f) return;
-      var scale = t.clientWidth / 1440;
-      f.style.transform = 'scale(' + scale + ')';
-      f.style.height = Math.ceil(t.clientHeight / scale) + 'px';
-    });
-  }
-  window.addEventListener('resize', fitThumbs);
-  fitThumbs();
-  setTimeout(fitThumbs, 400);
-</script>
+<script type="text/babel" src="src0701/data.jsx"></script>
+<script type="text/babel" src="src0701/screen.jsx"></script>
+<script type="text/babel" src="src0701/robot.jsx"></script>
+<script type="text/babel" src="src0701/app.jsx"></script>
 </body>
 </html>
