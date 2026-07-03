@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>NAMUX.COM 리뉴얼 — AS-IS↔TO-BE 비교 데모 (0701)</title>
+
+<link rel="stylesheet" href="_ds/namuh-x-design-system-7766e90e-e112-40a0-bb7f-0cb3e4bb5396/tokens/fonts.css" />
+<link rel="stylesheet" href="_ds/namuh-x-design-system-7766e90e-e112-40a0-bb7f-0cb3e4bb5396/tokens/colors.css" />
+<link rel="stylesheet" href="_ds/namuh-x-design-system-7766e90e-e112-40a0-bb7f-0cb3e4bb5396/tokens/typography.css" />
+<link rel="stylesheet" href="_ds/namuh-x-design-system-7766e90e-e112-40a0-bb7f-0cb3e4bb5396/tokens/layout.css" />
+<link rel="stylesheet" href="_ds/namuh-x-design-system-7766e90e-e112-40a0-bb7f-0cb3e4bb5396/tokens/base.css" />
+<link rel="stylesheet" href="_ds/namuh-x-design-system-7766e90e-e112-40a0-bb7f-0cb3e4bb5396/styles.css" />
+
+<style>
+  html, body { margin: 0; padding: 0; }
+  body {
+    font-family: var(--font-sans);
+    background: var(--surface-page);
+    color: var(--text-body);
+    -webkit-font-smoothing: antialiased;
+  }
+  a { color: inherit; }
+  ::selection { background: var(--ws-mint); color: var(--ws-black); }
+  @keyframes hf-pop { from { opacity: 0; transform: translateX(-50%) translateY(-6px); } to { opacity: 1; transform: translateX(-50%) translateY(0); } }
+  @keyframes hf-box { 0% { opacity: 0; transform: scale(1.04); } 55% { opacity: 1; } 100% { opacity: 1; transform: scale(1); } }
+  @keyframes hf-mark { from { opacity: 0; transform: scale(.8); } to { opacity: 1; transform: scale(1); } }
+  @keyframes hf-ring { 0% { transform: scale(.7); opacity: .75; } 70% { transform: scale(1.6); opacity: 0; } 100% { opacity: 0; } }
+  @keyframes rb-cta { 0%,100% { box-shadow: 0 14px 40px rgba(133,225,210,.45); } 50% { box-shadow: 0 16px 52px rgba(133,225,210,.75); } }
+  @keyframes rb-cta-ring { 0% { transform: scale(1); opacity: .55; } 70% { transform: scale(1.18); opacity: 0; } 100% { opacity: 0; } }
+  @keyframes rb-cta-arrow { 0%,100% { transform: translateY(0); } 50% { transform: translateY(3px); } }
+  @keyframes rb-pulse { 0% { transform: scale(.82); opacity: 0; } 24% { opacity: .9; } 100% { transform: scale(1.18); opacity: 0; } }
+  @keyframes rb-blink { 0%,92%,100% { transform: scaleY(1); } 96% { transform: scaleY(.1); } }
+  @keyframes rb-scan { 0% { top: 10%; } 50% { top: 86%; } 100% { top: 10%; } }
+  @keyframes rb-rise { from { transform: translateY(4px); opacity: .55; } to { transform: translateY(-3px); opacity: 1; } }
+  @keyframes rb-node { 0% { transform: translate(-50%,-50%) scale(.6); opacity: .35; } 40% { transform: translate(-50%,-50%) scale(1.25); opacity: 1; } 100% { transform: translate(-50%,-50%) scale(1); opacity: .9; } }
+</style>
+</head>
+<body>
+<div id="root"></div>
+
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+
+<script src="_ds/namuh-x-design-system-7766e90e-e112-40a0-bb7f-0cb3e4bb5396/_ds_bundle.js"></script>
+
+<script type="text/babel" src="src0701/data.jsx"></script>
+<script type="text/babel" src="src0701/screen.jsx"></script>
+<script type="text/babel" src="src0701/robot.jsx"></script>
+<script type="text/babel" src="src0701/app.jsx"></script>
+</body>
+</html>
