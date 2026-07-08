@@ -268,12 +268,17 @@
       try { return JSON.parse(localStorage.getItem(KEY) || "[]"); } catch (e) { return []; }
     });
     const [open, setOpen] = useState(false);
+    const [editing, setEditing] = useState(null);
     const [detail, setDetail] = useState(false);
     const [result, setResult] = useState(false);
     const save = (b) => { setBallots(b); try { localStorage.setItem(KEY, JSON.stringify(b)); } catch (e) {} };
-    const submit = (ballot) => { save([...ballots, ballot]); setOpen(false); };
-    const resetAll = () => save([]);
+    const submit = (ballot) => {
+      if (editing) save(ballots.map((b) => (b.at === editing.at ? { ...ballot, at: editing.at } : b)));
+      else save([...ballots, ballot]);
+      setOpen(false); setEditing(null);
+    };
     const del = (at) => save(ballots.filter((b) => b.at !== at));
+    const startEdit = (ballot) => { setEditing(ballot); setDetail(false); setOpen(true); };
 
     const total = ballots.length;
     const tallyFor = (row) => {
@@ -307,8 +312,7 @@
               투표 현황
             </button>
             {total > 0 && <button onClick={() => setDetail(true)} style={{ cursor: "pointer", padding: "10px 16px", borderRadius: "var(--radius-pill)", border: "1px solid var(--ws-black)", background: "var(--surface-card)", color: "var(--text-strong)", fontSize: 13, fontWeight: 700, fontFamily: "inherit" }}>참가 현황 자세히 보기</button>}
-            {total > 0 && <button onClick={resetAll} style={{ cursor: "pointer", padding: "10px 14px", borderRadius: "var(--radius-pill)", border: "1px solid var(--border-default)", background: "var(--surface-card)", color: "var(--text-muted)", fontSize: 13, fontWeight: 700, fontFamily: "inherit" }}>초기화</button>}
-            <button onClick={() => setOpen(true)} style={{ cursor: "pointer", display: "inline-flex", alignItems: "center", gap: 8, padding: "13px 24px", borderRadius: "var(--radius-pill)", border: "none", background: "var(--ws-mint)", color: "var(--ws-black)", fontSize: 15, fontWeight: 800, fontFamily: "inherit", boxShadow: "0 8px 24px rgba(133,225,210,.5)", animation: "votePulse 2s ease-in-out infinite" }}>
+            <button onClick={() => { setEditing(null); setOpen(true); }} style={{ cursor: "pointer", display: "inline-flex", alignItems: "center", gap: 8, padding: "13px 24px", borderRadius: "var(--radius-pill)", border: "none", background: "var(--ws-mint)", color: "var(--ws-black)", fontSize: 15, fontWeight: 800, fontFamily: "inherit", boxShadow: "0 8px 24px rgba(133,225,210,.5)", animation: "votePulse 2s ease-in-out infinite" }}>
               투표하러 가기
               <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round"><path d="M5 12h14M13 6l6 6-6 6" /></svg>
             </button>
@@ -364,18 +368,18 @@
           {total === 0 && <p style={{ margin: 0, fontSize: 13, color: "var(--text-faint)" }}>아직 투표가 없습니다. ‘투표하러 가기’를 눌러 첫 표를 등록하세요.</p>}
         </div>
 
-        {open && <VoteModal rows={rows} onClose={() => setOpen(false)} onSubmit={submit} />}
-        {detail && <VoteDetailModal rows={rows} ballots={ballots} onClose={() => setDetail(false)} onDelete={del} />}
+        {open && <VoteModal rows={rows} initial={editing} onClose={() => { setOpen(false); setEditing(null); }} onSubmit={submit} />}
+        {detail && <VoteDetailModal rows={rows} ballots={ballots} onClose={() => setDetail(false)} onDelete={del} onEdit={startEdit} />}
         {result && <VoteResultModal rows={rows} tallyFor={tallyFor} total={total} onClose={() => setResult(false)} />}
       </div>
     );
   }
 
   /* 투표 모달 — 이름 입력 + 안건별 후보 선택 */
-  function VoteModal({ rows, onClose, onSubmit }) {
-    const [name, setName] = useState("");
-    const [choices, setChoices] = useState({});
-    const [customNames, setCustomNames] = useState({});
+  function VoteModal({ rows, initial, onClose, onSubmit }) {
+    const [name, setName] = useState(initial ? initial.name : "");
+    const [choices, setChoices] = useState(initial ? { ...initial.choices } : {});
+    const [customNames, setCustomNames] = useState(initial && initial.customNames ? { ...initial.customNames } : {});
     const [err, setErr] = useState("");
     useEffect(() => {
       const onKey = (e) => { if (e.key === "Escape") onClose(); };
@@ -394,8 +398,8 @@
         <div onClick={(e) => e.stopPropagation()} style={{ width: "min(560px,100%)", maxHeight: "90vh", overflowY: "auto", background: "var(--surface-card)", borderRadius: "var(--radius-card)", padding: "28px", boxShadow: "0 40px 100px rgba(0,0,0,.38)" }}>
           <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", gap: 16 }}>
             <div>
-              <h3 style={{ margin: 0, fontSize: 21, fontWeight: 800, letterSpacing: "-0.02em", color: "var(--text-strong)" }}>네이밍 투표</h3>
-              <p style={{ margin: "6px 0 0", fontSize: 13.5, color: "var(--text-muted)" }}>이름을 입력하고 각 안건의 후보를 선택하세요. 원하시면 직접 제안도 가능합니다.</p>
+              <h3 style={{ margin: 0, fontSize: 21, fontWeight: 800, letterSpacing: "-0.02em", color: "var(--text-strong)" }}>{initial ? "투표 수정" : "네이밍 투표"}</h3>
+              <p style={{ margin: "6px 0 0", fontSize: 13.5, color: "var(--text-muted)" }}>{initial ? "선택을 변경한 뒤 저장하세요." : "이름을 입력하고 각 안건의 후보를 선택하세요. 원하시면 직접 제안도 가능합니다."}</p>
             </div>
             <button onClick={onClose} aria-label="닫기" style={{ flexShrink: 0, width: 38, height: 38, borderRadius: "50%", border: "none", background: "var(--gray-100,#eef0f3)", cursor: "pointer", color: "var(--text-strong)", display: "flex", alignItems: "center", justifyContent: "center" }}>
               <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><path d="M6 6l12 12M18 6L6 18" /></svg>
@@ -447,14 +451,14 @@
           ))}
 
           {err && <p style={{ margin: "16px 0 0", fontSize: 13, fontWeight: 600, color: "#e5484d" }}>{err}</p>}
-          <button onClick={go} disabled={!valid} style={{ marginTop: 20, width: "100%", cursor: valid ? "pointer" : "not-allowed", padding: "15px", borderRadius: "var(--radius-pill)", border: "none", background: valid ? "var(--ws-mint)" : "var(--gray-200,#dfe2e7)", color: valid ? "var(--ws-black)" : "var(--text-faint)", fontSize: 15, fontWeight: 800, fontFamily: "inherit", transition: "background .2s, color .2s" }}>{valid ? "투표 완료" : "이름과 두 안건을 모두 입력하세요"}</button>
+          <button onClick={go} disabled={!valid} style={{ marginTop: 20, width: "100%", cursor: valid ? "pointer" : "not-allowed", padding: "15px", borderRadius: "var(--radius-pill)", border: "none", background: valid ? "var(--ws-mint)" : "var(--gray-200,#dfe2e7)", color: valid ? "var(--ws-black)" : "var(--text-faint)", fontSize: 15, fontWeight: 800, fontFamily: "inherit", transition: "background .2s, color .2s" }}>{valid ? (initial ? "수정 완료" : "투표 완료") : "이름과 두 안건을 모두 입력하세요"}</button>
         </div>
       </div>
     );
   }
 
   /* 참가 현황 상세 — 실제 투표 기록 */
-  function VoteDetailModal({ rows, ballots, onClose, onDelete }) {
+  function VoteDetailModal({ rows, ballots, onClose, onDelete, onEdit }) {
     useEffect(() => {
       const onKey = (e) => { if (e.key === "Escape") onClose(); };
       window.addEventListener("keydown", onKey);
@@ -488,7 +492,10 @@
                     <span style={{ width: 30, height: 30, borderRadius: "50%", background: "var(--ws-blue)", color: "#fff", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 13, fontWeight: 800 }}>{b.name.slice(0, 1)}</span>
                     <span style={{ fontSize: 15, fontWeight: 700, color: "var(--text-strong)" }}>{b.name}</span>
                   </div>
-                  <button onClick={() => onDelete(b.at)} aria-label="삭제" style={{ cursor: "pointer", fontSize: 12, fontWeight: 700, color: "var(--text-faint)", background: "none", border: "none", fontFamily: "inherit" }}>삭제</button>
+                  <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
+                    <button onClick={() => onEdit(b)} style={{ cursor: "pointer", fontSize: 12, fontWeight: 700, color: "var(--ws-black)", background: "var(--gray-100,#eef0f3)", border: "none", borderRadius: 999, padding: "6px 12px", fontFamily: "inherit" }}>수정</button>
+                    <button onClick={() => onDelete(b.at)} aria-label="삭제" style={{ cursor: "pointer", fontSize: 12, fontWeight: 700, color: "var(--text-faint)", background: "none", border: "none", fontFamily: "inherit", padding: "6px 8px" }}>삭제</button>
+                  </div>
                 </div>
                 <div style={{ display: "flex", flexDirection: "column", gap: 7 }}>
                   {rows.map((row) => {
