@@ -918,7 +918,24 @@
   }
 
   function App() {
-    const [selected, setSelected] = useState("home");
+    const readHash = () => {
+      const h = decodeURIComponent((window.location.hash || "").replace(/^#\/?/, ""));
+      return SCREENS[h] ? h : "home";
+    };
+    const [selected, setSelectedRaw] = useState(readHash);
+    const setSelected = (id) => {
+      setSelectedRaw(id);
+      const target = "#" + id;
+      if (window.location.hash !== target) {
+        try { window.history.pushState(null, "", id === "home" ? window.location.pathname + window.location.search : target); } catch (e) { window.location.hash = id === "home" ? "" : id; }
+      }
+    };
+    useEffect(() => {
+      const onHash = () => setSelectedRaw(readHash());
+      window.addEventListener("hashchange", onHash);
+      window.addEventListener("popstate", onHash);
+      return () => { window.removeEventListener("hashchange", onHash); window.removeEventListener("popstate", onHash); };
+    }, []);
     const [fs, setFs] = useState(null); // { screen, side, setSide }
     const screen = SCREENS[selected];
 
