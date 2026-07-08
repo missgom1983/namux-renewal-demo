@@ -264,16 +264,12 @@
   /* ---- 네이밍 투표 (이름 입력 → 안건별 선택 → 통계) ---- */
   function VotePanel({ rows, voters }) {
     const KEY = "namux_naming_ballots_v2";
-    const BIN_KEY = "namux_vote_bin";
-    const BIN_BASE = "https://jsonblob.com/api/jsonBlob";
+    // 공용 저장소(Firebase Realtime Database) — 모두가 같은 데이터를 실시간 공유
+    const DB = "https://namuhx-with-default-rtdb.firebaseio.com/namux_votes";
     const [ballots, setBallots] = useState(() => {
       try { return JSON.parse(localStorage.getItem(KEY) || "[]"); } catch (e) { return []; }
     });
-    const [binId, setBinId] = useState(() => {
-      try { return new URLSearchParams(window.location.search).get("vote") || localStorage.getItem(BIN_KEY) || ""; } catch (e) { return ""; }
-    });
-    const [conn, setConn] = useState("local"); // local | connecting | online | error
-    const [busy, setBusy] = useState(false);
+    const [conn, setConn] = useState("connecting"); // connecting | online | error
     const [open, setOpen] = useState(false);
     const [editing, setEditing] = useState(null);
     const [detail, setDetail] = useState(false);
@@ -281,80 +277,57 @@
     const ballotsRef = useRef(ballots);
     ballotsRef.current = ballots;
 
-    const setLocal = (b) => { setBallots(b); try { localStorage.setItem(KEY, JSON.stringify(b)); } catch (e) {} };
-    const binUrl = (id) => BIN_BASE + "/" + id;
-
-    // 원격 읽기
-    const pull = async (id) => {
-      const res = await fetch(binUrl(id), { headers: { "Accept": "application/json" } });
-      if (!res.ok) throw new Error("read " + res.status);
-      const data = await res.json();
-      return Array.isArray(data) ? data : [];
-    };
-    // 원격 쓰기 (최신 병합 후 저장 — 동시 투표 유실 최소화)
-    const push = async (id, mutate) => {
-      let remote = [];
-      try { remote = await pull(id); } catch (e) {}
-      const merged = mutate(remote);
-      const res = await fetch(binUrl(id), { method: "PUT", headers: { "Content-Type": "application/json", "Accept": "application/json" }, body: JSON.stringify(merged) });
-      if (!res.ok) throw new Error("write " + res.status);
-      return merged;
+    // 로컬 캐시(오프라인 대비) — 첫 화면 즉시 표시 및 네트워크 실패 시 보존
+    const cache = (b) => { try { localStorage.setItem(KEY, JSON.stringify(b)); } catch (e) {} };
+    const applyRemote = (obj) => {
+      const arr = obj ? Object.keys(obj).map((k) => obj[k]).filter((x) => x && x.at) : [];
+      arr.sort((a, b) => (a.at || 0) - (b.at || 0));
+      setBallots(arr); cache(arr);
     };
 
-    // 최초 연결 + 폴링
+    // 공용 저장소 읽기 폴링(실시간 동기화) — 다른 사람 투표가 몇 초 내 반영
     useEffect(() => {
-      if (!binId) { setConn("local"); return; }
       let alive = true;
-      try { localStorage.setItem(BIN_KEY, binId); } catch (e) {}
-      setConn("connecting");
       const sync = async () => {
-        try { const d = await pull(binId); if (alive) { setBallots(d); setConn("online"); } }
-        catch (e) { if (alive) setConn("error"); }
+        try {
+          const res = await fetch(DB + ".json", { cache: "no-store" });
+          if (!res.ok) throw new Error("read " + res.status);
+          const data = await res.json();
+          if (alive) { applyRemote(data); setConn("online"); }
+        } catch (e) { if (alive) setConn("error"); }
       };
       sync();
-      const iv = setInterval(sync, 5000);
+      const iv = setInterval(sync, 4000);
       return () => { alive = false; clearInterval(iv); };
-    }, [binId]);
+    }, []);
 
-    // 공용 투표방 만들기
-    const createRoom = async () => {
-      setBusy(true);
-      try {
-        const res = await fetch(BIN_BASE, { method: "POST", headers: { "Content-Type": "application/json", "Accept": "application/json" }, body: JSON.stringify(ballotsRef.current || []) });
-        if (!res.ok) throw new Error("create " + res.status);
-        const loc = res.headers.get("Location") || res.headers.get("X-jsonblob") || "";
-        const id = loc.split("/").pop();
-        if (!id) throw new Error("no id");
-        try { localStorage.setItem(BIN_KEY, id); } catch (e) {}
-        try { const u = new URL(window.location.href); u.searchParams.set("vote", id); window.history.replaceState(null, "", u.toString()); } catch (e) {}
-        setBinId(id);
-      } catch (e) { alert("공용 투표방 생성에 실패했습니다. 네트워크를 확인하고 다시 시도해 주세요."); }
-      setBusy(false);
+    // 개별 기록 저장/삭제 — 사람별 at 키로 저장해 동시 편집에도 서로 덮어쓰지 않음
+    const putBallot = async (b) => {
+      const res = await fetch(DB + "/" + b.at + ".json", { method: "PUT", headers: { "Content-Type": "application/json" }, body: JSON.stringify(b) });
+      if (!res.ok) throw new Error("write " + res.status);
+    };
+    const removeBallot = async (at) => {
+      const res = await fetch(DB + "/" + at + ".json", { method: "DELETE" });
+      if (!res.ok) throw new Error("delete " + res.status);
     };
 
-    const copyShare = () => {
-      let url = window.location.href;
-      try { const u = new URL(window.location.href); if (binId) u.searchParams.set("vote", binId); url = u.toString(); } catch (e) {}
-      try { navigator.clipboard.writeText(url); } catch (e) {}
-      const el = document.getElementById("vote-share-msg"); if (el) { el.style.opacity = 1; setTimeout(() => { el.style.opacity = 0; }, 1800); }
-    };
-
-    const commit = async (mutate) => {
-      const next = mutate(ballotsRef.current);
-      setLocal(next);
-      if (binId) {
-        setBusy(true);
-        try { const merged = await push(binId, mutate); setBallots(merged); setConn("online"); }
-        catch (e) { setConn("error"); }
-        setBusy(false);
-      }
-    };
-    const submit = (ballot) => {
-      if (editing) commit((arr) => arr.map((b) => (b.at === editing.at ? { ...ballot, at: editing.at } : b)));
-      else commit((arr) => [...arr, ballot]);
+    const submit = async (ballot) => {
+      const rec = editing ? { ...ballot, at: editing.at } : ballot;
+      // 낙관적 반영 후 공용 저장소에 기록
+      const next = editing
+        ? ballotsRef.current.map((b) => (b.at === editing.at ? rec : b))
+        : [...ballotsRef.current, rec];
+      setBallots(next); cache(next);
       setOpen(false); setEditing(null);
+      try { await putBallot(rec); setConn("online"); }
+      catch (e) { setConn("error"); alert("저장에 실패했습니다. 네트워크를 확인하고 다시 시도해 주세요."); }
     };
-    const del = (at) => commit((arr) => arr.filter((b) => b.at !== at));
+    const del = async (at) => {
+      const next = ballotsRef.current.filter((b) => b.at !== at);
+      setBallots(next); cache(next);
+      try { await removeBallot(at); setConn("online"); }
+      catch (e) { setConn("error"); alert("삭제에 실패했습니다. 네트워크를 확인하고 다시 시도해 주세요."); }
+    };
     const startEdit = (ballot) => { setEditing(ballot); setDetail(false); setOpen(true); };
 
     const total = ballots.length;
@@ -380,23 +353,13 @@
           <div>
             <div style={{ display: "flex", alignItems: "center", gap: 9, flexWrap: "wrap" }}>
               <h3 style={{ margin: 0, fontSize: 18, fontWeight: 800, letterSpacing: "-0.02em", color: "var(--text-strong)" }}>네이밍 투표</h3>
-              {conn === "online" && <span style={{ display: "inline-flex", alignItems: "center", gap: 5, fontSize: 11.5, fontWeight: 700, color: "#1f8a5b", background: "rgba(31,138,91,.1)", padding: "3px 10px", borderRadius: 999 }}><span style={{ width: 6, height: 6, borderRadius: "50%", background: "#1f8a5b" }}></span>공용 저장소 연결됨</span>}
+              {conn === "online" && <span style={{ display: "inline-flex", alignItems: "center", gap: 5, fontSize: 11.5, fontWeight: 700, color: "#1f8a5b", background: "rgba(31,138,91,.1)", padding: "3px 10px", borderRadius: 999 }}><span style={{ width: 6, height: 6, borderRadius: "50%", background: "#1f8a5b" }}></span>공용 저장소 연결됨 · 실시간</span>}
               {conn === "connecting" && <span style={{ fontSize: 11.5, fontWeight: 700, color: "var(--text-muted)", background: "var(--gray-100,#eef0f3)", padding: "3px 10px", borderRadius: 999 }}>연결 중…</span>}
-              {conn === "error" && <span style={{ fontSize: 11.5, fontWeight: 700, color: "#e5484d", background: "rgba(229,72,77,.1)", padding: "3px 10px", borderRadius: 999 }}>연결 오류 — 로컬 표시</span>}
-              {conn === "local" && <span style={{ fontSize: 11.5, fontWeight: 700, color: "var(--text-muted)", background: "var(--gray-100,#eef0f3)", padding: "3px 10px", borderRadius: 999 }}>로컬 전용</span>}
+              {conn === "error" && <span style={{ fontSize: 11.5, fontWeight: 700, color: "#e5484d", background: "rgba(229,72,77,.1)", padding: "3px 10px", borderRadius: 999 }}>연결 오류 — 캐시 표시</span>}
             </div>
-            <p style={{ margin: "5px 0 0", fontSize: 13, color: "var(--text-muted)" }}>지금까지 <span style={{ fontWeight: 800, color: "var(--text-strong)" }}>{total}</span>명 참여, 메뉴 3과 메뉴 5 안건을 투표합니다 <span id="vote-share-msg" style={{ opacity: 0, transition: "opacity .3s", color: "var(--mint-600)", fontWeight: 700, marginLeft: 6 }}>공유 링크가 복사되었습니다</span></p>
+            <p style={{ margin: "5px 0 0", fontSize: 13, color: "var(--text-muted)" }}>지금까지 <span style={{ fontWeight: 800, color: "var(--text-strong)" }}>{total}</span>명 참여, 메뉴 3과 메뉴 5 안건을 투표합니다. 누구나 투표·수정·삭제할 수 있고, 모두가 같은 최신 결과를 실시간으로 공유합니다.</p>
           </div>
           <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
-            {binId
-              ? <button onClick={copyShare} style={{ cursor: "pointer", display: "inline-flex", alignItems: "center", gap: 7, padding: "10px 16px", borderRadius: "var(--radius-pill)", border: "1px solid var(--border-default)", background: "var(--surface-card)", color: "var(--text-strong)", fontSize: 13, fontWeight: 700, fontFamily: "inherit" }}>
-                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M10 13a5 5 0 0 0 7 0l3-3a5 5 0 0 0-7-7l-1 1M14 11a5 5 0 0 0-7 0l-3 3a5 5 0 0 0 7 7l1-1" /></svg>
-                  공유 링크 복사
-                </button>
-              : <button onClick={createRoom} disabled={busy} style={{ cursor: busy ? "wait" : "pointer", display: "inline-flex", alignItems: "center", gap: 7, padding: "10px 16px", borderRadius: "var(--radius-pill)", border: "1px solid var(--ws-black)", background: "var(--surface-card)", color: "var(--text-strong)", fontSize: 13, fontWeight: 700, fontFamily: "inherit" }}>
-                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 5v14M5 12h14" /></svg>
-                  {busy ? "생성 중…" : "공용 투표방 만들기"}
-                </button>}
             <button onClick={() => setResult(true)} style={{ cursor: "pointer", display: "inline-flex", alignItems: "center", gap: 7, padding: "10px 16px", borderRadius: "var(--radius-pill)", border: "1px solid var(--ws-black)", background: "var(--ws-black)", color: "#fff", fontSize: 13, fontWeight: 700, fontFamily: "inherit" }}>
               <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2" /></svg>
               투표 현황
