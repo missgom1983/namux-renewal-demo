@@ -268,12 +268,45 @@
       title: "상상해", tag: "가칭",
       src: "assets/imagine.jpg", ratio: 11841 / 2940,
     },
+    roboEraHub: {
+      id: "roboEraHub", type: "naming",
+      kicker: "함께 만드는 로봇 시대 — 메뉴 네이밍(안)",
+      title: "함께 만드는 로봇 시대",
+      concept: "팬덤 커뮤니티 마케팅, 양방향 소통 메뉴",
+      desc: "고객과 함께 만들어가는 브랜드 커뮤니티 메뉴입니다. 상위 메뉴명은 확정, 하위 5개 메뉴는 브랜드마케팅팀과 나무엑스운영팀 네이밍안을 비교해 2건(메뉴 3, 5)만 확정 협의가 남았습니다.",
+      rows: [
+        { no: "메뉴 1", role: "브랜드 필름, 인플루언서 영상 등", current: "로봇과 사는 시대", brand: "로봇과 사는 시대", ops: "로봇과 사는 시대", status: "확정" },
+        { no: "메뉴 2", role: "고객 창작 공간, 참여 캠페인 (예: 나무엑스 꾸미기)", current: "상상해", curX: true, brand: "상상하는 로봇", ops: "상상하는 로봇", status: "확정" },
+        { no: "메뉴 3", role: "고객 의견 수집(제품,기능,OTA, 웹 등) → 개선 반영 루프", pre: "(오픈 이후)", current: "만들어", curX: true, brand: "1안) 함께 만드는 로봇\n2안) 함께 개발하는 로봇", ops: "3안) 학습하는 로봇", status: "협의",
+          candidates: [
+            { id: "m3a", n: "1안", label: "함께 만드는 로봇", team: "브랜드마케팅팀" },
+            { id: "m3b", n: "2안", label: "함께 개발하는 로봇", team: "브랜드마케팅팀" },
+            { id: "m3c", n: "3안", label: "학습하는 로봇", team: "나무엑스운영팀" },
+          ] },
+        { no: "메뉴 4", role: "OTA 성장 기록으로 재방문 유도", current: "점점 더", curX: true, brand: "성장하는 로봇", ops: "성장하는 로봇", status: "확정" },
+        { no: "메뉴 5", role: "GEO/SEO 목적, 공식 아티클(블로그)", current: "로봇 다이어리", brand: "1안) 소통하는 로봇", ops: "2안) 우리집 로봇의 일기장", status: "협의",
+          candidates: [
+            { id: "m5a", n: "1안", label: "소통하는 로봇", team: "브랜드마케팅팀" },
+            { id: "m5b", n: "2안", label: "우리집 로봇의 일기장", team: "나무엑스운영팀" },
+          ] },
+      ],
+      voters: [
+        { id: "d1", role: "실장", name: "실장", weight: 3 },
+        { id: "t1", role: "팀장", name: "팀장 A", weight: 2 },
+        { id: "t2", role: "팀장", name: "팀장 B", weight: 2 },
+        { id: "m1", role: "팀원", name: "팀원 01" }, { id: "m2", role: "팀원", name: "팀원 02" },
+        { id: "m3", role: "팀원", name: "팀원 03" }, { id: "m4", role: "팀원", name: "팀원 04" },
+        { id: "m5", role: "팀원", name: "팀원 05" }, { id: "m6", role: "팀원", name: "팀원 06" },
+        { id: "m7", role: "팀원", name: "팀원 07" }, { id: "m8", role: "팀원", name: "팀원 08" },
+        { id: "m9", role: "팀원", name: "팀원 09" }, { id: "m10", role: "팀원", name: "팀원 10" },
+      ],
+    },
   };
 
   // GNB 2depth — 스크린샷 IA 기준. desc=설명(기울임), tag=가칭, pre=오픈이후(빨강), xmark=X마크, children=하위
   const GNB = [
     { name: "웰니스 로봇", to: "robot", isNew: true, items: [
-      { label: "처음 만나는 웰니스 로봇", desc: "음성대화, Vision AI, 자율주행 등", screen: "welcome" },
+      { label: "처음 만나는 웰니스 로봇", desc: "‘로봇’ 브랜드로 각인을 위한 웰니스 로봇 오버뷰", screen: "welcome" },
       { label: "빈틈없는 공간 케어", desc: "에어솔루션, 세이프케어, 라이브뷰 등" },
       { label: "나를 위한 맞춤 케어", desc: "마이헬스케어, 바이탈, 컴패니언 등" },
       { label: "매일 진화하는 AI", desc: "OTA, 데이터 초 개인화, 생태계 등" },
@@ -314,12 +347,12 @@
         { label: "제품 활용 영상" },
       ]},
     ]},
-    { name: "함께 만드는 로봇 시대", isNew: true, items: [
-      { label: "로봇과 사는 시대", desc: "브랜드 필름, 인플루언서 영상 등", screen: "robotEra" },
-      { label: "상상해", xmark: true, tag: "가칭", desc: "고객 창작 공간, 나무엑스 꾸미기 등", screen: "imagine" },
-      { label: "만들어", xmark: true, tag: "가칭", pre: "(오픈 이후)", desc: "고객 의견 → OTA 회귀" },
-      { label: "점점 더", xmark: true, tag: "가칭", desc: "OTA, 성장기록 → 재방문 유도", screen: "growx" },
-      { label: "로봇 다이어리", tag: "가칭", desc: "공식 아티클 → GEO/SEO", screen: "diary" },
+    { name: "함께 만드는 로봇 시대", to: "roboEraHub", isNew: true, items: [
+      { label: "로봇과 사는 시대", screen: "robotEra" },
+      { label: "상상해", xmark: true, screen: "imagine" },
+      { label: "만들어", xmark: true, pre: "(오픈 이후)" },
+      { label: "점점 더", xmark: true, screen: "growx" },
+      { label: "로봇 다이어리", screen: "diary" },
     ]},
   ];
 

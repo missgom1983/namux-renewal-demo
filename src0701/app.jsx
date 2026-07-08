@@ -2,7 +2,7 @@
    실제 GNB(검정 바, 5개 메뉴) + 메가메뉴로 개별 화면 선택 → 단독 보기.
    앵커 링크 없음. */
 (function () {
-  const { useState } = React;
+  const { useState, useEffect } = React;
   const { ScreenViewer, FullscreenModal } = window;
   const { GNB, SCREENS } = window.DEMO_DATA;
 
@@ -176,6 +176,419 @@
         </div>
       </React.Fragment>);
 
+  }
+
+  /* ---- 화면 스테이지 (신규 메뉴 · 컨셉) ---- */
+  /* N안) 접두어를 눈에 띄는 뱃지로 렌더 */
+  function NameCell({ text, agreed }) {
+    const lines = String(text).split("\n");
+    return (
+      <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+        {lines.map((ln, i) => {
+          const m = ln.match(/^(\d+안)\)\s*(.*)$/);
+          if (m) return (
+            <span key={i} style={{ display: "inline-flex", alignItems: "center", gap: 8 }}>
+              <span style={{ flexShrink: 0, fontSize: 11.5, fontWeight: 800, color: "var(--ws-black)", background: "var(--ws-mint)", padding: "3px 9px", borderRadius: 7, letterSpacing: "-0.01em" }}>{m[1]}</span>
+              <span style={{ fontSize: 15, fontWeight: 700, color: "var(--text-strong)" }}>{m[2]}</span>
+            </span>);
+          return <span key={i} style={{ fontSize: 15, fontWeight: agreed ? 700 : 600, color: agreed ? "var(--text-strong)" : "var(--text-body)" }}>{ln}</span>;
+        })}
+      </div>
+    );
+  }
+
+  function NamingStage({ screen }) {
+    const chip = (s) => s === "확정"
+      ? { bg: "var(--ws-mint)", fg: "var(--ws-black)", label: "확정" }
+      : { bg: "var(--mint-50, #eafaf6)", fg: "var(--mint-600)", label: "협의 중", outline: true };
+    const voteRows = screen.rows.filter((r) => r.candidates);
+    return (
+      <React.Fragment>
+        <div style={{ marginBottom: 22 }}>
+          <div style={{ display: "flex", alignItems: "baseline", gap: 12, flexWrap: "wrap" }}>
+            <h2 style={{ margin: 0, fontSize: 30, fontWeight: 700, letterSpacing: "-0.018em", color: "var(--text-strong)" }}>{screen.title}</h2>
+          </div>
+          <p style={{ margin: "6px 0 0", fontSize: 14, fontWeight: 600, color: "var(--mint-600)" }}>{screen.concept}</p>
+        </div>
+
+        <div style={{ borderRadius: "var(--radius-card)", overflow: "hidden", border: "1px solid var(--border-subtle)", boxShadow: "var(--shadow-card)", background: "var(--surface-card)" }}>
+          {/* header row */}
+          <div style={{ display: "grid", gridTemplateColumns: "minmax(200px,1.3fr) 0.95fr 1fr 1fr 96px", background: "var(--gray-50)", borderBottom: "1px solid var(--border-subtle)" }}>
+            {["구분 / 역할", "현재 메뉴명", "브랜드마케팅팀 (안)", "나무엑스운영팀 (안)", "상태"].map((h, i) => (
+              <div key={h} style={{ padding: "14px 18px", fontSize: 12.5, fontWeight: 700, letterSpacing: "-0.01em", color: "var(--text-muted)", textAlign: i === 4 ? "center" : "left", borderLeft: i === 0 ? "none" : "1px solid var(--border-subtle)" }}>{h}</div>
+            ))}
+          </div>
+          {screen.rows.map((r, idx) => {
+            const c = chip(r.status);
+            const agreed = r.brand === r.ops;
+            return (
+              <div key={r.no} style={{ display: "grid", gridTemplateColumns: "minmax(200px,1.3fr) 0.95fr 1fr 1fr 96px", borderBottom: idx === screen.rows.length - 1 ? "none" : "1px solid var(--border-subtle)", background: r.status === "협의" ? "rgba(133,225,210,.05)" : "var(--surface-card)" }}>
+                <div style={{ padding: "7px 18px", borderLeft: "none" }}>
+                  <div style={{ display: "flex", alignItems: "center", gap: 7, marginBottom: 4, flexWrap: "wrap" }}>
+                    <span style={{ fontSize: 12, fontWeight: 700, color: "var(--mint-600)" }}>{r.no}</span>
+                    {r.pre && <span style={{ fontSize: 11, fontWeight: 700, color: "#e5484d" }}>{r.pre}</span>}
+                  </div>
+                  <div style={{ fontSize: 14, lineHeight: 1.5, color: "var(--text-body)" }}>
+                    {r.role}
+                  </div>
+                </div>
+                <div style={{ padding: "7px 18px", borderLeft: "1px solid var(--border-subtle)", display: "flex", alignItems: "center" }}>
+                  <span style={{ fontSize: 15, fontWeight: 700, color: "var(--text-strong)", display: "inline-flex", alignItems: "flex-start", gap: 1 }}>
+                    {r.current}{r.curX && <sup style={{ fontSize: 10, fontWeight: 800, color: "var(--ws-mint)", lineHeight: 1 }}>X</sup>}
+                  </span>
+                </div>
+                <div style={{ padding: "7px 18px", borderLeft: "1px solid var(--border-subtle)", display: "flex", alignItems: "center" }}>
+                  <NameCell text={r.brand} agreed={agreed} />
+                </div>
+                <div style={{ padding: "7px 18px", borderLeft: "1px solid var(--border-subtle)", display: "flex", alignItems: "center" }}>
+                  <NameCell text={r.ops} agreed={agreed} />
+                </div>
+                <div style={{ padding: "7px 12px", borderLeft: "1px solid var(--border-subtle)", display: "flex", alignItems: "center", justifyContent: "center" }}>
+                  <span style={{ fontSize: 12, fontWeight: 700, color: c.fg, background: c.bg, padding: "5px 12px", borderRadius: 999, border: c.outline ? "1px solid var(--mint-600)" : "none", whiteSpace: "nowrap" }}>{c.label}</span>
+                </div>
+              </div>
+            );
+          })}
+        </div>
+
+        <div style={{ display: "flex", gap: 10, alignItems: "center", marginTop: 16, fontSize: 13, color: "var(--text-muted)", flexWrap: "wrap" }}>
+          <span style={{ display: "inline-flex", alignItems: "center", gap: 6 }}><span style={{ width: 10, height: 10, borderRadius: 3, background: "var(--ws-mint)" }}></span>확정 — 양 팀 동일안</span>
+          <span style={{ display: "inline-flex", alignItems: "center", gap: 6 }}><span style={{ width: 10, height: 10, borderRadius: 3, background: "var(--mint-50,#eafaf6)", border: "1px solid var(--mint-600)" }}></span>협의 중 — 확정 필요</span>
+        </div>
+
+        {voteRows.length > 0 && <VotePanel rows={voteRows} voters={screen.voters} />}
+      </React.Fragment>
+    );
+  }
+
+  /* ---- 네이밍 투표 (이름 입력 → 안건별 선택 → 통계) ---- */
+  function VotePanel({ rows, voters }) {
+    const KEY = "namux_naming_ballots_v2";
+    const [ballots, setBallots] = useState(() => {
+      try { return JSON.parse(localStorage.getItem(KEY) || "[]"); } catch (e) { return []; }
+    });
+    const [open, setOpen] = useState(false);
+    const [detail, setDetail] = useState(false);
+    const [result, setResult] = useState(false);
+    const save = (b) => { setBallots(b); try { localStorage.setItem(KEY, JSON.stringify(b)); } catch (e) {} };
+    const submit = (ballot) => { save([...ballots, ballot]); setOpen(false); };
+    const resetAll = () => save([]);
+    const del = (at) => save(ballots.filter((b) => b.at !== at));
+
+    const total = ballots.length;
+    const tallyFor = (row) => {
+      const t = row.candidates.map((c) => ({ ...c, count: ballots.filter((b) => b.choices[row.no] === c.id).length }));
+      const max = Math.max(1, ...t.map((x) => x.count));
+      const leadCount = Math.max(0, ...t.map((x) => x.count));
+      // 직접 제안된 이름 집계
+      const props = {};
+      ballots.forEach((b) => {
+        if (b.choices[row.no] === "custom") {
+          const nm = (b.customNames && b.customNames[row.no] || "").trim();
+          if (nm) { props[nm] = props[nm] || []; props[nm].push(b.name); }
+        }
+      });
+      const customs = Object.keys(props).map((nm) => ({ name: nm, by: props[nm] }));
+      return { t, max, leadCount, customs };
+    };
+
+    return (
+      <div style={{ marginTop: 30, borderRadius: "var(--radius-card)", border: "1px solid var(--border-subtle)", boxShadow: "var(--shadow-card)", background: "var(--surface-card)", overflow: "hidden" }}>
+        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 14, flexWrap: "wrap", padding: "18px 22px", borderBottom: "1px solid var(--border-subtle)", background: "var(--gray-50)" }}>
+          <div>
+            <div style={{ display: "flex", alignItems: "center", gap: 9 }}>
+              <h3 style={{ margin: 0, fontSize: 18, fontWeight: 800, letterSpacing: "-0.02em", color: "var(--text-strong)" }}>네이밍 투표</h3>
+            </div>
+            <p style={{ margin: "5px 0 0", fontSize: 13, color: "var(--text-muted)" }}>지금까지 <span style={{ fontWeight: 800, color: "var(--text-strong)" }}>{total}</span>명 참여, 메뉴 3과 메뉴 5 안건을 투표합니다</p>
+          </div>
+          <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
+            <button onClick={() => setResult(true)} style={{ cursor: "pointer", display: "inline-flex", alignItems: "center", gap: 7, padding: "10px 16px", borderRadius: "var(--radius-pill)", border: "1px solid var(--ws-black)", background: "var(--ws-black)", color: "#fff", fontSize: 13, fontWeight: 700, fontFamily: "inherit" }}>
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2" /></svg>
+              투표 현황
+            </button>
+            {total > 0 && <button onClick={() => setDetail(true)} style={{ cursor: "pointer", padding: "10px 16px", borderRadius: "var(--radius-pill)", border: "1px solid var(--ws-black)", background: "var(--surface-card)", color: "var(--text-strong)", fontSize: 13, fontWeight: 700, fontFamily: "inherit" }}>참가 현황 자세히 보기</button>}
+            {total > 0 && <button onClick={resetAll} style={{ cursor: "pointer", padding: "10px 14px", borderRadius: "var(--radius-pill)", border: "1px solid var(--border-default)", background: "var(--surface-card)", color: "var(--text-muted)", fontSize: 13, fontWeight: 700, fontFamily: "inherit" }}>초기화</button>}
+            <button onClick={() => setOpen(true)} style={{ cursor: "pointer", display: "inline-flex", alignItems: "center", gap: 8, padding: "13px 24px", borderRadius: "var(--radius-pill)", border: "none", background: "var(--ws-mint)", color: "var(--ws-black)", fontSize: 15, fontWeight: 800, fontFamily: "inherit", boxShadow: "0 8px 24px rgba(133,225,210,.5)", animation: "votePulse 2s ease-in-out infinite" }}>
+              투표하러 가기
+              <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round"><path d="M5 12h14M13 6l6 6-6 6" /></svg>
+            </button>
+          </div>
+        </div>
+
+        {/* 안건별 통계 */}
+        <div style={{ padding: "22px", display: "flex", flexDirection: "column", gap: 22 }}>
+          {rows.map((row) => {
+            const { t, max, leadCount, customs } = tallyFor(row);
+            return (
+              <div key={row.no}>
+                <div style={{ display: "flex", alignItems: "baseline", gap: 10, marginBottom: 14, flexWrap: "wrap" }}>
+                  <span style={{ fontSize: 13, fontWeight: 800, color: "#fff", background: "var(--ws-blue)", padding: "4px 11px", borderRadius: 7 }}>{row.no}</span>
+                  <span style={{ fontSize: 14, fontWeight: 700, color: "var(--text-strong)" }}>{row.role}</span>
+                </div>
+                <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+                  {t.map((c) => {
+                    const lead = total > 0 && c.count === leadCount && c.count > 0;
+                    const pct = total > 0 ? Math.round(c.count / total * 100) : 0;
+                    return (
+                      <div key={c.id} style={{ display: "grid", gridTemplateColumns: "210px 1fr auto", alignItems: "center", gap: 14 }}>
+                        <div style={{ display: "flex", alignItems: "center", gap: 8, minWidth: 0 }}>
+                          <span style={{ flexShrink: 0, fontSize: 11.5, fontWeight: 800, color: "var(--ws-black)", background: "var(--ws-mint)", padding: "3px 9px", borderRadius: 7 }}>{c.n}</span>
+                          <span style={{ fontSize: 14.5, fontWeight: 700, color: "var(--text-strong)", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{c.label}</span>
+                        </div>
+                        <div style={{ position: "relative", height: 30, borderRadius: 8, background: "var(--gray-100,#eef0f3)", overflow: "hidden" }}>
+                          <div style={{ position: "absolute", inset: 0, width: (c.count / max * 100) + "%", background: lead ? "var(--ws-mint)" : "rgba(133,225,210,.4)", borderRadius: 8, transition: "width .4s var(--ease-out)" }}></div>
+                        </div>
+                        <div style={{ minWidth: 88, textAlign: "right", fontSize: 13, color: "var(--text-muted)" }}>
+                          <span style={{ fontSize: 17, fontWeight: 800, color: "var(--text-strong)" }}>{c.count}</span>표 · {pct}%
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+                {customs.length > 0 && (
+                  <div style={{ marginTop: 12, paddingTop: 12, borderTop: "1px dashed var(--border-subtle)" }}>
+                    <div style={{ fontSize: 12, fontWeight: 700, color: "var(--mint-600)", marginBottom: 8 }}>직접 제안된 이름</div>
+                    <div style={{ display: "flex", flexWrap: "wrap", gap: 8 }}>
+                      {customs.map((cs) => (
+                        <span key={cs.name} style={{ display: "inline-flex", alignItems: "center", gap: 7, fontSize: 13, fontWeight: 600, color: "var(--text-strong)", background: "var(--gray-100,#eef0f3)", padding: "7px 12px", borderRadius: 999 }}>
+                          {cs.name}
+                          <span style={{ fontSize: 11, fontWeight: 700, color: "#fff", background: "var(--ws-blue)", padding: "1px 8px", borderRadius: 999 }}>{cs.by.length}</span>
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+                )}
+              </div>
+            );
+          })}
+          {total === 0 && <p style={{ margin: 0, fontSize: 13, color: "var(--text-faint)" }}>아직 투표가 없습니다. ‘투표하러 가기’를 눌러 첫 표를 등록하세요.</p>}
+        </div>
+
+        {open && <VoteModal rows={rows} onClose={() => setOpen(false)} onSubmit={submit} />}
+        {detail && <VoteDetailModal rows={rows} ballots={ballots} onClose={() => setDetail(false)} onDelete={del} />}
+        {result && <VoteResultModal rows={rows} tallyFor={tallyFor} total={total} onClose={() => setResult(false)} />}
+      </div>
+    );
+  }
+
+  /* 투표 모달 — 이름 입력 + 안건별 후보 선택 */
+  function VoteModal({ rows, onClose, onSubmit }) {
+    const [name, setName] = useState("");
+    const [choices, setChoices] = useState({});
+    const [customNames, setCustomNames] = useState({});
+    const [err, setErr] = useState("");
+    useEffect(() => {
+      const onKey = (e) => { if (e.key === "Escape") onClose(); };
+      window.addEventListener("keydown", onKey);
+      const prev = document.body.style.overflow; document.body.style.overflow = "hidden";
+      return () => { window.removeEventListener("keydown", onKey); document.body.style.overflow = prev; };
+    }, []);
+    const pick = (menuNo, candId) => setChoices((c) => ({ ...c, [menuNo]: candId }));
+    const valid = name.trim() && rows.every((r) => choices[r.no] && !(choices[r.no] === "custom" && !(customNames[r.no] || "").trim()));
+    const go = () => {
+      if (!valid) return;
+      onSubmit({ name: name.trim(), choices, customNames, at: Date.now() });
+    };
+    return (
+      <div onClick={onClose} style={{ position: "fixed", inset: 0, zIndex: 1200, background: "rgba(8,10,14,.5)", backdropFilter: "blur(4px)", display: "flex", alignItems: "center", justifyContent: "center", padding: "clamp(16px,4vw,48px)" }}>
+        <div onClick={(e) => e.stopPropagation()} style={{ width: "min(560px,100%)", maxHeight: "90vh", overflowY: "auto", background: "var(--surface-card)", borderRadius: "var(--radius-card)", padding: "28px", boxShadow: "0 40px 100px rgba(0,0,0,.38)" }}>
+          <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", gap: 16 }}>
+            <div>
+              <h3 style={{ margin: 0, fontSize: 21, fontWeight: 800, letterSpacing: "-0.02em", color: "var(--text-strong)" }}>네이밍 투표</h3>
+              <p style={{ margin: "6px 0 0", fontSize: 13.5, color: "var(--text-muted)" }}>이름을 입력하고 각 안건의 후보를 선택하세요. 원하시면 직접 제안도 가능합니다.</p>
+            </div>
+            <button onClick={onClose} aria-label="닫기" style={{ flexShrink: 0, width: 38, height: 38, borderRadius: "50%", border: "none", background: "var(--gray-100,#eef0f3)", cursor: "pointer", color: "var(--text-strong)", display: "flex", alignItems: "center", justifyContent: "center" }}>
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><path d="M6 6l12 12M18 6L6 18" /></svg>
+            </button>
+          </div>
+
+          <label style={{ display: "block", marginTop: 22, fontSize: 12.5, fontWeight: 700, color: "var(--text-muted)", marginBottom: 7 }}>이름</label>
+          <input value={name} onChange={(e) => { setName(e.target.value); setErr(""); }} placeholder="예: 홍길동" autoFocus
+            style={{ width: "100%", boxSizing: "border-box", padding: "12px 14px", borderRadius: 12, border: "1px solid var(--border-default)", background: "var(--surface-card)", fontSize: 15, fontFamily: "inherit", color: "var(--text-strong)", outline: "none" }} />
+
+          {rows.map((row) => (
+            <div key={row.no} style={{ marginTop: 22 }}>
+              <div style={{ display: "flex", alignItems: "baseline", gap: 9, marginBottom: 10, flexWrap: "wrap" }}>
+                <span style={{ fontSize: 12.5, fontWeight: 800, color: "#fff", background: "var(--ws-blue)", padding: "3px 10px", borderRadius: 7 }}>{row.no}</span>
+                <span style={{ fontSize: 13.5, fontWeight: 600, color: "var(--text-body)" }}>{row.role}</span>
+              </div>
+              <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+                {row.candidates.map((c) => {
+                  const on = choices[row.no] === c.id;
+                  return (
+                    <button key={c.id} onClick={() => { pick(row.no, c.id); setErr(""); }} style={{ cursor: "pointer", textAlign: "left", display: "flex", alignItems: "center", gap: 10, padding: "13px 14px", borderRadius: 14, border: "1.5px solid " + (on ? "var(--ws-black)" : "var(--border-default)"), background: on ? "var(--mint-50,#eafaf6)" : "var(--surface-card)", fontFamily: "inherit" }}>
+                      <span style={{ flexShrink: 0, width: 20, height: 20, borderRadius: "50%", border: "2px solid " + (on ? "var(--ws-black)" : "var(--border-default)"), display: "flex", alignItems: "center", justifyContent: "center" }}>
+                        {on && <span style={{ width: 10, height: 10, borderRadius: "50%", background: "var(--ws-black)" }}></span>}
+                      </span>
+                      <span style={{ fontSize: 11.5, fontWeight: 800, color: "var(--ws-black)", background: "var(--ws-mint)", padding: "3px 9px", borderRadius: 7 }}>{c.n}</span>
+                      <span style={{ fontSize: 14.5, fontWeight: 700, color: "var(--text-strong)" }}>{c.label}</span>
+                      <span style={{ marginLeft: "auto", fontSize: 11, color: "var(--text-faint)" }}>{c.team}</span>
+                    </button>
+                  );
+                })}
+                {(() => {
+                  const on = choices[row.no] === "custom";
+                  return (
+                    <div style={{ padding: "13px 14px", borderRadius: 14, border: "1.5px solid " + (on ? "var(--ws-black)" : "var(--border-default)"), background: on ? "var(--mint-50,#eafaf6)" : "var(--surface-card)" }}>
+                      <button onClick={() => { pick(row.no, "custom"); setErr(""); }} style={{ cursor: "pointer", textAlign: "left", width: "100%", display: "flex", alignItems: "center", gap: 10, background: "none", border: "none", padding: 0, fontFamily: "inherit" }}>
+                        <span style={{ flexShrink: 0, width: 20, height: 20, borderRadius: "50%", border: "2px solid " + (on ? "var(--ws-black)" : "var(--border-default)"), display: "flex", alignItems: "center", justifyContent: "center" }}>
+                          {on && <span style={{ width: 10, height: 10, borderRadius: "50%", background: "var(--ws-black)" }}></span>}
+                        </span>
+                        <span style={{ fontSize: 11.5, fontWeight: 800, color: "var(--ws-black)", background: "var(--gray-200,#dfe2e7)", padding: "3px 9px", borderRadius: 7 }}>제안</span>
+                        <span style={{ fontSize: 14.5, fontWeight: 700, color: "var(--text-strong)" }}>직접 제안하기</span>
+                      </button>
+                      {on && <input value={customNames[row.no] || ""} onChange={(e) => { setCustomNames((c) => ({ ...c, [row.no]: e.target.value })); setErr(""); }} placeholder="제안할 메뉴명을 입력하세요" autoFocus
+                        style={{ marginTop: 11, width: "100%", boxSizing: "border-box", padding: "11px 13px", borderRadius: 10, border: "1px solid var(--border-default)", background: "var(--surface-card)", fontSize: 14.5, fontFamily: "inherit", color: "var(--text-strong)", outline: "none" }} />}
+                    </div>
+                  );
+                })()}
+              </div>
+            </div>
+          ))}
+
+          {err && <p style={{ margin: "16px 0 0", fontSize: 13, fontWeight: 600, color: "#e5484d" }}>{err}</p>}
+          <button onClick={go} disabled={!valid} style={{ marginTop: 20, width: "100%", cursor: valid ? "pointer" : "not-allowed", padding: "15px", borderRadius: "var(--radius-pill)", border: "none", background: valid ? "var(--ws-mint)" : "var(--gray-200,#dfe2e7)", color: valid ? "var(--ws-black)" : "var(--text-faint)", fontSize: 15, fontWeight: 800, fontFamily: "inherit", transition: "background .2s, color .2s" }}>{valid ? "투표 완료" : "이름과 두 안건을 모두 입력하세요"}</button>
+        </div>
+      </div>
+    );
+  }
+
+  /* 참가 현황 상세 — 실제 투표 기록 */
+  function VoteDetailModal({ rows, ballots, onClose, onDelete }) {
+    useEffect(() => {
+      const onKey = (e) => { if (e.key === "Escape") onClose(); };
+      window.addEventListener("keydown", onKey);
+      const prev = document.body.style.overflow; document.body.style.overflow = "hidden";
+      return () => { window.removeEventListener("keydown", onKey); document.body.style.overflow = prev; };
+    }, []);
+    const labelFor = (row, b) => {
+      const ch = b.choices[row.no];
+      if (ch === "custom") { const nm = (b.customNames && b.customNames[row.no] || "").trim(); return { n: "제안", label: nm || "(미입력)", custom: true }; }
+      const c = row.candidates.find((x) => x.id === ch);
+      return c ? { n: c.n, label: c.label } : { n: "", label: "—" };
+    };
+    const sorted = ballots.slice().sort((a, b) => b.at - a.at);
+    return (
+      <div onClick={onClose} style={{ position: "fixed", inset: 0, zIndex: 1200, background: "rgba(8,10,14,.5)", backdropFilter: "blur(4px)", display: "flex", alignItems: "center", justifyContent: "center", padding: "clamp(16px,4vw,48px)" }}>
+        <div onClick={(e) => e.stopPropagation()} style={{ width: "min(680px,100%)", maxHeight: "90vh", overflowY: "auto", background: "var(--surface-card)", borderRadius: "var(--radius-card)", padding: "28px", boxShadow: "0 40px 100px rgba(0,0,0,.38)" }}>
+          <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", gap: 16, marginBottom: 20 }}>
+            <div>
+              <h3 style={{ margin: 0, fontSize: 21, fontWeight: 800, letterSpacing: "-0.02em", color: "var(--text-strong)" }}>참가 현황</h3>
+              <p style={{ margin: "6px 0 0", fontSize: 13.5, color: "var(--text-muted)" }}>총 <span style={{ fontWeight: 800, color: "var(--text-strong)" }}>{ballots.length}</span>명이 투표했습니다.</p>
+            </div>
+            <button onClick={onClose} aria-label="닫기" style={{ flexShrink: 0, width: 38, height: 38, borderRadius: "50%", border: "none", background: "var(--gray-100,#eef0f3)", cursor: "pointer", color: "var(--text-strong)", display: "flex", alignItems: "center", justifyContent: "center" }}>
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><path d="M6 6l12 12M18 6L6 18" /></svg>
+            </button>
+          </div>
+          <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+            {sorted.map((b) => (
+              <div key={b.at} style={{ border: "1px solid var(--border-subtle)", borderRadius: 14, padding: "14px 16px" }}>
+                <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 12, marginBottom: 10 }}>
+                  <div style={{ display: "flex", alignItems: "center", gap: 9 }}>
+                    <span style={{ width: 30, height: 30, borderRadius: "50%", background: "var(--ws-blue)", color: "#fff", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 13, fontWeight: 800 }}>{b.name.slice(0, 1)}</span>
+                    <span style={{ fontSize: 15, fontWeight: 700, color: "var(--text-strong)" }}>{b.name}</span>
+                  </div>
+                  <button onClick={() => onDelete(b.at)} aria-label="삭제" style={{ cursor: "pointer", fontSize: 12, fontWeight: 700, color: "var(--text-faint)", background: "none", border: "none", fontFamily: "inherit" }}>삭제</button>
+                </div>
+                <div style={{ display: "flex", flexDirection: "column", gap: 7 }}>
+                  {rows.map((row) => {
+                    const l = labelFor(row, b);
+                    return (
+                      <div key={row.no} style={{ display: "flex", alignItems: "center", gap: 9 }}>
+                        <span style={{ flexShrink: 0, fontSize: 11.5, fontWeight: 800, color: "#fff", background: "var(--ws-blue)", padding: "2px 9px", borderRadius: 6 }}>{row.no}</span>
+                        <span style={{ flexShrink: 0, fontSize: 11, fontWeight: 800, color: "var(--ws-black)", background: l.custom ? "var(--gray-200,#dfe2e7)" : "var(--ws-mint)", padding: "2px 8px", borderRadius: 6 }}>{l.n}</span>
+                        <span style={{ fontSize: 14, fontWeight: 600, color: "var(--text-strong)" }}>{l.label}</span>
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  /* 투표 현황 — 결과 통계 모달 */
+  function VoteResultModal({ rows, tallyFor, total, onClose }) {
+    useEffect(() => {
+      const onKey = (e) => { if (e.key === "Escape") onClose(); };
+      window.addEventListener("keydown", onKey);
+      const prev = document.body.style.overflow; document.body.style.overflow = "hidden";
+      return () => { window.removeEventListener("keydown", onKey); document.body.style.overflow = prev; };
+    }, []);
+    return (
+      <div onClick={onClose} style={{ position: "fixed", inset: 0, zIndex: 1200, background: "rgba(8,10,14,.5)", backdropFilter: "blur(4px)", display: "flex", alignItems: "center", justifyContent: "center", padding: "clamp(16px,4vw,48px)" }}>
+        <div onClick={(e) => e.stopPropagation()} style={{ width: "min(720px,100%)", maxHeight: "90vh", overflowY: "auto", background: "var(--surface-card)", borderRadius: "var(--radius-card)", padding: "28px", boxShadow: "0 40px 100px rgba(0,0,0,.38)" }}>
+          <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", gap: 16, marginBottom: 22 }}>
+            <div>
+              <h3 style={{ margin: 0, fontSize: 21, fontWeight: 800, letterSpacing: "-0.02em", color: "var(--text-strong)" }}>투표 현황</h3>
+              <p style={{ margin: "6px 0 0", fontSize: 13.5, color: "var(--text-muted)" }}>총 <span style={{ fontWeight: 800, color: "var(--text-strong)" }}>{total}</span>명 참여 · 안건별 득표 결과</p>
+            </div>
+            <button onClick={onClose} aria-label="닫기" style={{ flexShrink: 0, width: 38, height: 38, borderRadius: "50%", border: "none", background: "var(--gray-100,#eef0f3)", cursor: "pointer", color: "var(--text-strong)", display: "flex", alignItems: "center", justifyContent: "center" }}>
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><path d="M6 6l12 12M18 6L6 18" /></svg>
+            </button>
+          </div>
+
+          {total === 0 && <p style={{ margin: 0, fontSize: 14, color: "var(--text-faint)" }}>아직 투표가 없습니다. ‘투표하러 가기’로 첫 표를 등록하세요.</p>}
+
+          <div style={{ display: "flex", flexDirection: "column", gap: 24 }}>
+            {rows.map((row) => {
+              const { t, max, leadCount, customs } = tallyFor(row);
+              const winners = t.filter((c) => c.count === leadCount && c.count > 0);
+              const tie = winners.length > 1;
+              return (
+                <div key={row.no} style={{ border: "1px solid var(--border-subtle)", borderRadius: 16, padding: "18px 20px" }}>
+                  <div style={{ display: "flex", alignItems: "center", gap: 9, marginBottom: 14, flexWrap: "wrap" }}>
+                    <span style={{ fontSize: 12.5, fontWeight: 800, color: "#fff", background: "var(--ws-blue)", padding: "3px 10px", borderRadius: 7 }}>{row.no}</span>
+                    <span style={{ fontSize: 14, fontWeight: 700, color: "var(--text-strong)" }}>{row.role}</span>
+                    {total > 0 && <span style={{ marginLeft: "auto", fontSize: 12, fontWeight: 700, color: "var(--ws-black)", background: "var(--ws-mint)", padding: "3px 11px", borderRadius: 999 }}>{tie ? "동률" : "1위"} · {winners.map((w) => w.label).join(", ") || "—"}</span>}
+                  </div>
+                  <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+                    {t.map((c) => {
+                      const lead = total > 0 && c.count === leadCount && c.count > 0;
+                      const pct = total > 0 ? Math.round(c.count / total * 100) : 0;
+                      return (
+                        <div key={c.id} style={{ display: "grid", gridTemplateColumns: "190px 1fr auto", alignItems: "center", gap: 14 }}>
+                          <div style={{ display: "flex", alignItems: "center", gap: 8, minWidth: 0 }}>
+                            <span style={{ flexShrink: 0, fontSize: 11.5, fontWeight: 800, color: "var(--ws-black)", background: "var(--ws-mint)", padding: "3px 9px", borderRadius: 7 }}>{c.n}</span>
+                            <span style={{ fontSize: 14.5, fontWeight: 700, color: "var(--text-strong)", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{c.label}</span>
+                          </div>
+                          <div style={{ position: "relative", height: 30, borderRadius: 8, background: "var(--gray-100,#eef0f3)", overflow: "hidden" }}>
+                            <div style={{ position: "absolute", inset: 0, width: (c.count / max * 100) + "%", background: lead ? "var(--ws-mint)" : "rgba(133,225,210,.4)", borderRadius: 8, transition: "width .4s var(--ease-out)" }}></div>
+                          </div>
+                          <div style={{ minWidth: 88, textAlign: "right", fontSize: 13, color: "var(--text-muted)" }}>
+                            <span style={{ fontSize: 17, fontWeight: 800, color: "var(--text-strong)" }}>{c.count}</span>표 · {pct}%
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                  {customs.length > 0 ? (
+                    <div style={{ marginTop: 12, paddingTop: 12, borderTop: "1px dashed var(--border-subtle)" }}>
+                      <div style={{ fontSize: 12, fontWeight: 700, color: "var(--mint-600)", marginBottom: 8 }}>직접 제안된 이름</div>
+                      <div style={{ display: "flex", flexWrap: "wrap", gap: 8 }}>
+                        {customs.map((cs) => (
+                          <span key={cs.name} style={{ display: "inline-flex", alignItems: "center", gap: 7, fontSize: 13, fontWeight: 600, color: "var(--text-strong)", background: "var(--gray-100,#eef0f3)", padding: "7px 12px", borderRadius: 999 }}>
+                            {cs.name}
+                            <span style={{ fontSize: 11, fontWeight: 700, color: "#fff", background: "var(--ws-blue)", padding: "1px 8px", borderRadius: 999 }}>{cs.by.length}</span>
+                          </span>
+                        ))}
+                      </div>
+                    </div>
+                  ) : (
+                    <div style={{ marginTop: 12, paddingTop: 12, borderTop: "1px dashed var(--border-subtle)" }}>
+                      <div style={{ fontSize: 12, fontWeight: 700, color: "var(--text-faint)" }}>직접 제안된 이름 <span style={{ fontWeight: 600 }}>— 아직 없음</span></div>
+                    </div>
+                  )}
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      </div>
+    );
   }
 
   /* ---- 화면 스테이지 (신규 메뉴 · 컨셉) ---- */
@@ -519,6 +932,7 @@
     if (screen.type === "report") stage = <ReportStage key={screen.id} screen={screen} />;else
     if (screen.type === "video") stage = <VideoStage key={screen.id} screen={screen} />;else
     if (screen.type === "page") stage = <PageStage key={screen.id} screen={screen} />;else
+    if (screen.type === "naming") stage = <NamingStage key={screen.id} screen={screen} />;else
     if (screen.type === "story") stage = <RobotStage key={screen.id} screen={screen} onGo={goStore} />;else
     if (screen.type === "concept") stage = <ConceptStage key={screen.id} screen={screen} />;else
     stage = <ShotStage key={screen.id} screen={screen} onFullscreen={openFs} />;
