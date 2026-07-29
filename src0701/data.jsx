@@ -204,7 +204,7 @@
     growx: {
       id: "growx", type: "report", mockup: "growx", badge: "NEW",
       kicker: "신규 메뉴 · 기획 단계",
-      title: "제품 업데이트 내역",
+      title: "업데이트 소식",
       desc: "OTA 성장 스토리를 월별로 전달하고 이메일 구독으로 재방문을 유도하는 신규 메뉴입니다.\n지속되는 업데이트를 ‘구독 확장성’의 근거로 전환합니다.",
       months: [
         { ym: "2026년 5월", count: "6건의 업데이트", cards: [
@@ -338,9 +338,9 @@
     ]},
     { name: "고객지원", items: [
       { label: "공지사항" },
+      { label: "업데이트 소식", screen: "growx" },
       { label: "FAQ" },
       { label: "문의하기" },
-      { label: "제품 업데이트 내역", screen: "growx" },
       { label: "제품 지원", children: [
         { label: "A/S 안내" },
         { label: "서비스 센터" },
