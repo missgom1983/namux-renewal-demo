@@ -783,7 +783,7 @@
   function DiaryMock({ s }) {
     return (
       <div>
-        <h4 style={{ margin: 0, fontSize: 18, fontWeight: 700, color: "var(--text-strong)", letterSpacing: "-0.01em" }}>로봇 다이어리</h4>
+        <h4 style={{ margin: 0, fontSize: 18, fontWeight: 700, color: "var(--text-strong)", letterSpacing: "-0.01em" }}>나무엑스 이야기</h4>
         <p style={{ margin: "8px 0 16px", fontSize: 13, color: "var(--text-muted)" }}>{s.hero}</p>
         <div style={{ height: 110, borderRadius: 12, background: "var(--ws-blue)", display: "flex", alignItems: "center", justifyContent: "center", color: "rgba(255,255,255,.7)", fontSize: 13, fontWeight: 600, marginBottom: 18 }}>Key Visual</div>
         <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>

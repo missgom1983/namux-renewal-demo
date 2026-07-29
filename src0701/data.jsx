@@ -204,7 +204,7 @@
     growx: {
       id: "growx", type: "report", mockup: "growx", badge: "NEW",
       kicker: "신규 메뉴 · 기획 단계",
-      title: "점점 더 X",
+      title: "제품 업데이트 내역",
       desc: "OTA 성장 스토리를 월별로 전달하고 이메일 구독으로 재방문을 유도하는 신규 메뉴입니다.\n지속되는 업데이트를 ‘구독 확장성’의 근거로 전환합니다.",
       months: [
         { ym: "2026년 5월", count: "6건의 업데이트", cards: [
@@ -229,7 +229,7 @@
     diary: {
       id: "diary", type: "report", mockup: "diary", en: "blog",
       kicker: "신규 메뉴 · 기획 단계",
-      title: "로봇 다이어리",
+      title: "나무엑스 이야기",
       desc: "GEO 및 SEO 대응 페이지로 제품 가치를 일상 스토리로 풀어내는 콘텐츠 허브입니다.",
       hero: "로봇과 사는 시대, 나무엑스와 함께하는 일상",
       articles: [
@@ -265,7 +265,7 @@
     imagine: {
       id: "imagine", type: "page",
       kicker: "함께 만드는 로봇 시대",
-      title: "상상해", tag: "가칭",
+      title: "나무엑스 꾸미기",
       src: "assets/imagine.jpg", ratio: 11841 / 2940,
     },
     roboEraHub: {
@@ -340,6 +340,7 @@
       { label: "공지사항" },
       { label: "FAQ" },
       { label: "문의하기" },
+      { label: "제품 업데이트 내역", screen: "growx" },
       { label: "제품 지원", children: [
         { label: "A/S 안내" },
         { label: "서비스 센터" },
@@ -349,10 +350,9 @@
     ]},
     { name: "함께 만드는 로봇 시대", to: "roboEraHub", isNew: true, items: [
       { label: "로봇과 사는 시대", screen: "robotEra" },
-      { label: "상상해", xmark: true, screen: "imagine" },
-      { label: "만들어", xmark: true, pre: "(오픈 이후)" },
-      { label: "점점 더", xmark: true, screen: "growx" },
-      { label: "로봇 다이어리", screen: "diary" },
+      { label: "나무엑스 꾸미기", screen: "imagine" },
+      { label: "함께 만드는 나무엑스", pre: "(오픈 이후)" },
+      { label: "나무엑스 이야기", screen: "diary" },
     ]},
   ];
 
