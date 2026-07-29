@@ -36,7 +36,7 @@
                 { x: 39.7, y: 4.4, h: 56, text: "구독 신청하는 구매 페이지" },
                 { x: 46.2, y: 4.4, h: 98, text: "구매 혜택을 보는 메뉴" },
               ] },
-      tobe: { src: "assets/tobe-store.png", ratio: 5471 / 1920, tag: "TO-BE", label: "리뉴얼", caption: "제품·구독·소모품·이벤트·혜택·스토리까지 완결형 허브" },
+      tobe: { src: "스토어_홈_FHD.png".normalize("NFD"), ratio: 5471 / 1920, tag: "TO-BE", label: "리뉴얼", caption: "제품·구독·소모품·이벤트·혜택·스토리까지 완결형 허브" },
       issues: [
         { label: "톤앤매너 — 다크톤 적용", desc: "구매 화면임에도 정보 가독성 저하", box: { x: 2, y: 4, w: 96, h: 8 } },
         { label: "카테고리 구조 — 상품 단순 나열", desc: "제품·구독·소모품 구분 없이 평면 진열", box: { x: 2, y: 30, w: 96, h: 40 } },
@@ -44,11 +44,11 @@
         { label: "소셜프루프 — 제품 정보 단편적", desc: "다각도 확인 경로 부재", box: { x: 2, y: 69, w: 96, h: 9 } },
       ],
       changes: [
-        { label: "톤앤매너 — 라이트톤 전환", desc: "구매 페이지 가독성 최우선으로 변경", box: { x: 2, y: 1, w: 96, h: 6 } },
-        { label: "구독 옵션 인라인", desc: "색상, 구독기간, 관리유형, 구독신청을 상품 카드에서 바로 확인", box: { x: 2, y: 8, w: 96, h: 11 } },
-        { label: "카테고리 구조 — 3개 카테고리 영역 신설", desc: "제품 / 구독 서비스 / 소모품으로 구분", box: { x: 2, y: 20, w: 96, h: 16 } },
-        { label: "구매 정보 동선 — 스토어로 일원화", desc: "구매에 필요한 정보를 한 메뉴에 집결, 동선 단축", box: { x: 2, y: 44, w: 96, h: 18 } },
-        { label: "소셜프루프 — 블로그 신설", desc: "다각적 제품 정보로 탐색·신뢰 보강", box: { x: 2, y: 76, w: 96, h: 16 } },
+        { label: "톤앤매너 — 라이트톤 전환", desc: "구매 페이지 가독성 최우선으로 변경", box: { x: 2, y: 1, w: 96, h: 4.5 } },
+        { label: "구독 옵션 인라인", desc: "색상, 구독기간, 관리유형, 구독신청을 상품 카드에서 바로 확인", box: { x: 2, y: 6.5, w: 96, h: 12 } },
+        { label: "카테고리 구조 — 3개 카테고리 영역 신설", desc: "제품 / 구독 서비스 / 소모품으로 구분", box: { x: 2, y: 19.5, w: 96, h: 27.5 } },
+        { label: "구매 정보 동선 — 스토어로 일원화", desc: "이벤트/프로모션과 카드 혜택을 한 메뉴에 집결, 동선 단축", box: { x: 2, y: 48.5, w: 96, h: 25.5 } },
+        { label: "소셜프루프 — 구매 스토리 신설", desc: "실구매 후기·블로그형 콘텐츠로 탐색·신뢰 보강", box: { x: 2, y: 75.5, w: 96, h: 15 } },
       ],
     },
     pdp: {
@@ -58,7 +58,8 @@
       viewH: 892,
       desc: "어두운 단일 컬럼 구매 폼에서, 밝은 2단 구성으로. 좌측은 제품 체험, 우측은 구독 설계와 가격 설득을 전면화합니다.",
       asis: { src: "assets/asis-pdp.jpg", ratio: 13137 / 2940, tag: "AS-IS", label: "고도몰", caption: "다크 단일 컬럼 · 구매 옵션과 텍스트 리뷰 위주" },
-      tobe: { src: "assets/tobe-pdp.png", ratio: 4229 / 1920, tag: "TO-BE", label: "리뉴얼", caption: "좌측 체험 / 우측 구독 설계 + 하단 고정 구매바",
+      tobe: { src: "제품 리뷰_PC_FHD.png".normalize("NFD"), ratio: 3969 / 1920, tag: "TO-BE", label: "리뉴얼", caption: "좌측 제품 체험 / 우측 구독 설계 + AI 리뷰 요약",
+              hotspots: [{ x: 11, y: 32.4, w: 6.8, h: 1.9, label: "제품 상세 보기", img: "assets/tobe-pdp-body.png", title: "제품 상세" }],
               splitView: { left: "제품 체험", right: "구독 설계 / 구매", gnb: "assets/tobe-pdp-gnb.png", body: "assets/tobe-pdp-body-main.png", footer: "assets/tobe-pdp-footer.png", aiScreen: "ai" } },
       issues: [
         { label: "톤앤매너 — 다크 단일 컬럼", desc: "체험과 구매가 한 줄로 쌓여 가독성과 집중도 저하", box: { x: 2, y: 1, w: 96, h: 13 } },
@@ -67,11 +68,11 @@
         { label: "제품 체험/리뷰 — 텍스트/별점 위주", desc: "영상 및 요약 없이 긴 텍스트 리뷰가 이어짐", box: { x: 2, y: 55, w: 96, h: 22 } },
       ],
       changes: [
-        { label: "톤앤매너 — 라이트톤 변경", desc: "가독성 최우선 고려", box: { x: 2, y: 2, w: 96, h: 20 } },
-        { label: "제품 안내 영역 통합", desc: "분리됐던 제품 소개와 구매를 제품 안내 영역으로 통합\n(PC) 좌측 체험 / 우측 구독 설계로 체험과 구매를 한 화면에서 처리", box: { x: 2, y: 37, w: 96, h: 7 } },
-        { label: "영상 리뷰 도입", desc: "실사용 영상 및 고화질 사진 리뷰로 제품 신뢰도 강화", box: { x: 2, y: 24, w: 46, h: 9 } },
-        { label: "AI 리뷰 요약", desc: "리뷰를 AI가 한 줄로 요약하고 키워드 필터칩으로 정리해 구매 결정 단축", box: { x: 2, y: 30, w: 46, h: 14 } },
-        { label: "제품 View — 360 뷰어", desc: "클릭하고 360도 돌려보기", box: { x: 2, y: 2, w: 46, h: 20 } },
+        { label: "톤앤매너 — 라이트톤 변경", desc: "가독성 최우선 고려", box: { x: 2, y: 1.5, w: 96, h: 16 } },
+        { label: "영상 리뷰 도입", desc: "실사용 영상 및 고화질 사진 리뷰로 제품 신뢰도 강화", box: { x: 2, y: 35, w: 46, h: 13 } },
+        { label: "AI 리뷰 요약", desc: "리뷰를 AI가 한 줄로 요약하고 키워드 필터칩으로 정리해 구매 결정 단축", box: { x: 2, y: 19.5, w: 46, h: 8.5 } },
+        { label: "제품 View — 360 뷰어", desc: "클릭하고 360도 돌려보기", box: { x: 2, y: 2, w: 46, h: 16.5 } },
+        { label: "제품 안내 영역 통합", desc: "분리됐던 제품 소개와 구매를 제품 안내 영역으로 통합\n(PC) 좌측 체험 / 우측 구독 설계 · ‘제품 상세’ 탭으로 상세 콘텐츠 연결", box: { x: 11, y: 30.6, w: 6.8, h: 1.2 } },
       ],
     },
     ai: {
@@ -201,35 +202,83 @@
         ],
       },
     },
-    growx: {
-      id: "growx", type: "report", mockup: "growx", badge: "NEW",
-      kicker: "신규 메뉴 · 기획 단계",
-      title: "업데이트 소식",
-      desc: "OTA 성장 스토리를 월별로 전달하고 이메일 구독으로 재방문을 유도하는 신규 메뉴입니다.\n지속되는 업데이트를 ‘구독 확장성’의 근거로 전환합니다.",
-      months: [
-        { ym: "2026년 5월", count: "6건의 업데이트", cards: [
-          { tag: "대화형 상태확인", date: "2026.04.28", title: "“하이나무, 너 지금 어때?”" },
-          { tag: "자동 복귀", date: "2026.04.28", title: "10분 대기시 자동 복귀" },
-          { tag: "나이트모드", date: "2026.04.28", title: "나이트모드 향상" },
-        ]},
-        { ym: "2026년 4월", count: "3건의 업데이트", cards: [
-          { tag: "대화형 상태확인", date: "2026.03.21", title: "“하이나무, 너 지금 어때?”" },
-          { tag: "자동 복귀", date: "2026.03.21", title: "10분 대기시 자동 복귀" },
-          { tag: "나이트모드", date: "2026.03.21", title: "나이트모드 향상" },
-        ]},
+    brandstory: {
+      id: "brandstory", type: "shot",
+      kicker: "브랜드 / 브랜드 스토리",
+      title: "브랜드 스토리",
+      desc: "정적 이미지와 설명문 중심의 고도몰 브랜드 소개에서, 브랜드 필름과 타이포 서사로 몰입을 만드는 시네마틱 구성으로 바뀝니다.",
+      asis: { src: "(고도몰)브랜드스토리_260618.png".normalize("NFD"), ratio: 10337 / 1920, tag: "AS-IS", label: "고도몰", caption: "정적 이미지 히어로 + 긴 설명문 나열" },
+      tobe: { src: "Frame 2116930399.jpg", ratio: 9670 / 1920, tag: "TO-BE", label: "리뉴얼", caption: "브랜드 필름 + HUMAN 타이포 서사 + 파트너 신뢰 요소" },
+      issues: [
+        { label: "히어로 — 정적 이미지 1컷", desc: "브랜드 필름 없이 이미지로 시작, 감성 전달 한계", box: { x: 2, y: 3.5, w: 96, h: 6.5 } },
+        { label: "서사 — 설명문 과밀", desc: "로고·슬로건·심볼 설명이 텍스트 블록으로 나열됨", box: { x: 2, y: 11, w: 96, h: 9 } },
+        { label: "신뢰 요소 — 파트너·협력사 노출 부재", desc: "글로벌 생태계 서사를 받침할 근거가 약함", box: { x: 2, y: 26, w: 96, h: 8 } },
+        { label: "가독성 — 작은 회색 텍스트", desc: "다크 배경 위 저대비 텍스트로 핵심 메시지 흥려짐", box: { x: 2, y: 34, w: 96, h: 11 } },
       ],
-      points: [
-        ["월별 그룹핑", "연/월 단위 묶음 노출", "‘이 달의 업데이트’ 대표 영역 + 연/월별 업데이트 건수 표시 · 관리자 등록 운영"],
-        ["카드 목록", "썸네일 / 제목 / 날짜 요약", "업데이트별 썸네일(이미지/영상)·제목·날짜·요약 노출, 5개 단위 더보기"],
-        ["상세 모달", "Key Copy + 본문", "내용보기 모달: Key Copy, 본문 이미지/설명, 이전/다음 업데이트 네비게이션"],
-        ["재방문 유도", "이메일 구독 신청", "이메일 등록(로그인 시 자동 입력), 규칙 검수 후 저장, 신규 업데이트 발생 시 메일 발송"],
-        ["전략 가치", "OTA 가치 = 구독 근거", "지속 업데이트가 ‘구독 확장성’의 핵심 근거 — 제품이 계속 성장함을 고객에게 증명"],
+      changes: [
+        { label: "영상 히어로 — 브랜드 필름 전면 배치", desc: "영상으로 브랜드 무드를 직관 전달", box: { x: 2, y: 0.4, w: 96, h: 4.4 } },
+        { label: "HUMAN 타이포 서사", desc: "NAMUH = HUMAN 메시지를 큰 타이포로 각인", box: { x: 2, y: 5.3, w: 96, h: 4 } },
+        { label: "브랜드 자산 연결 CTA", desc: "로고·패턴 등 브랜드 자산 페이지로 탐색 동선 연결", box: { x: 2, y: 16.2, w: 96, h: 2.4 } },
+        { label: "파트너 로고월 — 신뢰 보강", desc: "Qualcomm 등 협력사 로고로 글로벌 생태계 서사 받침", box: { x: 2, y: 25.4, w: 96, h: 2.6 } },
+      ],
+    },
+    brandasset: {
+      id: "brandasset", type: "shot",
+      kicker: "브랜드 / 브랜드 자산",
+      title: "브랜드 자산",
+      desc: "라이트 UI 위 아카이브식 나열에서, 브랜드 필름·다크 무드·사이드 내비게이션을 갖춘 몰입형 자산 페이지로 바뀝니다.",
+      asis: { src: "(고도몰)브랜드자산_260618.png".normalize("NFD"), ratio: 9757 / 1920, tag: "AS-IS", label: "고도몰", caption: "라이트 UI 위 자산 아카이브식 나열" },
+      tobe: { src: "03.브랜드_02.브랜드자산.jpg".normalize("NFD"), ratio: 8594 / 1920, tag: "TO-BE", label: "리뉴얼", caption: "브랜드 필름 + 다크 무드 + 사이드 내비게이션" },
+      issues: [
+        { label: "톤앤매너 — 라이트 UI와 다크 자산 혼재", desc: "배경과 자산의 무드가 달라 브랜드 몰입 저하", box: { x: 2, y: 0.2, w: 96, h: 4 } },
+        { label: "구성 — 정적 아카이브 나열", desc: "좌측 라벨 + 우측 콘텐츠의 문서식 구성", box: { x: 2, y: 5, w: 96, h: 8 } },
+        { label: "탐색 — 섹션 내비게이션 부재", desc: "긴 페이지를 스크롤로만 탐색해야 함", box: { x: 2, y: 21, w: 96, h: 16 } },
+        { label: "다운로드 동선 — 버튼 분산", desc: "자산별 다운로드 버튼이 본문 중간에 흩어져 있음", box: { x: 34, y: 52.5, w: 28, h: 1.8 } },
+      ],
+      changes: [
+        { label: "브랜드 필름 히어로", desc: "자산 페이지도 영상으로 시작해 무드 전달", box: { x: 2, y: 0.3, w: 96, h: 8.7 } },
+        { label: "다크 단일 무드", desc: "자산과 배경 톤을 통일해 브랜드 몰입 강화", box: { x: 2, y: 11.5, w: 96, h: 5.5 } },
+        { label: "사이드 내비게이션", desc: "BI·심볼·로고·컬러·패턴·서체 섹션 바로가기", box: { x: 2, y: 18.3, w: 15, h: 6.5 } },
+        { label: "다운로드 CTA 정리", desc: "섹션 상단 우측에 AI/PNG 다운로드 고정 노출", box: { x: 58, y: 20.2, w: 38, h: 1.7 } },
+      ],
+    },
+    growx: {
+      id: "growx", type: "shot", badge: "NEW",
+      kicker: "고객지원 / 업데이트 소식",
+      title: "업데이트 소식",
+      desc: "이벤트 게시판 속 장문 이미지 한 장이었던 업데이트 소식을, 월별 목록·영상 하이라이트·이메일 구독을 갖춘 전용 메뉴로 전환합니다.\nOTA 성장 스토리가 곱 ‘구독 확장성’의 근거가 됩니다.",
+      asis: { src: "6306301072e8d8922970611f63fc1189.png", ratio: 22317 / 1200, tag: "AS-IS", label: "고도몰", caption: "프로모션과 업데이트 공지가 장문 다크 이미지 한 장에 혼재" },
+      tobe: { src: "04.고객지원_03.업데이트소식_list_01.png".normalize("NFD"), ratio: 2408 / 1920, tag: "TO-BE", label: "리뉴얼", caption: "월별 목록 + 영상 하이라이트 + 이메일 구독으로 재방문 유도" },
+      issues: [
+        { label: "구조 — 프로모션과 업데이트 혼재", desc: "세이프케어·라이브뷰 홍보와 업데이트 공지가 한 글에 섞여 있음", box: { x: 2, y: 0.2, w: 96, h: 26 } },
+        { label: "톤앤매너 — 장문 다크 이미지 한 장", desc: "텍스트까지 이미지로 굽어 가독성·검색(SEO) 대응 불가", box: { x: 2, y: 29, w: 96, h: 24 } },
+        { label: "탐색 — 업데이트별 구분 부재", desc: "업데이트가 세로로만 이어져 목록·월별·키워드 탐색 불가", box: { x: 2, y: 54, w: 96, h: 36 } },
+        { label: "재방문 유도 장치 부재", desc: "구독·알림 없이 일회성 열람으로 종료", box: { x: 2, y: 92, w: 96, h: 7 } },
+      ],
+      changes: [
+        { label: "대표 업데이트 하이라이트", desc: "이 달의 업데이트를 영상 배너로 전면 노출", box: { x: 12, y: 20, w: 76, h: 12 } },
+        { label: "월별 필터·검색", desc: "연/월 단위 드롭다운 + 검색으로 지난 업데이트 탐색", box: { x: 50, y: 33, w: 38, h: 10 } },
+        { label: "카드 목록 — 썸네일/제목/날짜", desc: "업데이트별 카드형 목록, 페이지네이션으로 탐색", box: { x: 12, y: 37, w: 76, h: 22 } },
+        { label: "이메일 구독 — 재방문 유도", desc: "새 업데이트 발생 시 메일 발송 → OTA 가치를 구독 근거로 전환", box: { x: 4, y: 70.4, w: 18, h: 1 } },
+      ],
+    },
+    together: {
+      id: "together", type: "page",
+      kicker: "함께 만드는 로봇 시대",
+      title: "함께 만드는 나무엑스",
+      pages: [
+        { label: "목록", src: "05.함께만드는로봇시대_03.함께만드는나무엑스_list.png".normalize("NFD") },
+        { label: "상세보기", src: "05.함께만드는로봇시대_03.함께만드는나무엑스_view.png".normalize("NFD") },
       ],
     },
     diary: {
-      id: "diary", type: "report", mockup: "diary", en: "blog",
-      kicker: "신규 메뉴 · 기획 단계",
+      id: "diary", type: "page", en: "blog",
+      kicker: "함께 만드는 로봇 시대",
       title: "나무엑스 이야기",
+      pages: [
+        { label: "목록", src: "05.함께만드는로봇시대_04.나무엑스이야기_list.png".normalize("NFD") },
+        { label: "상세보기", src: "05.함께만드는로봇시대_04.나무엑스이야기_view.png".normalize("NFD") },
+      ],
       desc: "GEO 및 SEO 대응 페이지로 제품 가치를 일상 스토리로 풀어내는 콘텐츠 허브입니다.",
       hero: "로봇과 사는 시대, 나무엑스와 함께하는 일상",
       articles: [
@@ -257,13 +306,13 @@
       ],
     },
     robotEra: {
-      id: "robotEra", type: "page",
+      id: "robotEra", type: "page", stageTag: "고도몰",
       kicker: "함께 만드는 로봇 시대",
       title: "로봇과 사는 시대",
       src: "assets/robot-era.png", ratio: 7176 / 3483,
     },
     imagine: {
-      id: "imagine", type: "page",
+      id: "imagine", type: "page", stageTag: "고도몰",
       kicker: "함께 만드는 로봇 시대",
       title: "나무엑스 꾸미기",
       src: "assets/imagine.jpg", ratio: 11841 / 2940,
@@ -328,8 +377,8 @@
       { label: "카드 혜택" },
     ]},
     { name: "브랜드", items: [
-      { label: "브랜드 스토리" },
-      { label: "브랜드 자산" },
+      { label: "브랜드 스토리", screen: "brandstory" },
+      { label: "브랜드 자산", screen: "brandasset" },
       { label: "브랜드 소식", children: [
         { label: "PR 뉴스" },
         { label: "Instagram" },
@@ -338,7 +387,7 @@
     ]},
     { name: "고객지원", items: [
       { label: "공지사항" },
-      { label: "업데이트 소식", screen: "growx" },
+      { label: "업데이트 소식", screen: "growx", isNew: true },
       { label: "FAQ" },
       { label: "문의하기" },
       { label: "제품 지원", children: [
@@ -351,7 +400,7 @@
     { name: "함께 만드는 로봇 시대", to: "roboEraHub", isNew: true, items: [
       { label: "로봇과 사는 시대", screen: "robotEra" },
       { label: "나무엑스 꾸미기", screen: "imagine" },
-      { label: "함께 만드는 나무엑스", pre: "(오픈 이후)" },
+      { label: "함께 만드는 나무엑스", pre: "(오픈 이후)", screen: "together" },
       { label: "나무엑스 이야기", screen: "diary" },
     ]},
   ];

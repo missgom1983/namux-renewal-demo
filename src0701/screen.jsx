@@ -80,11 +80,43 @@
     );
   }
 
+  /* ---- 핫스팟 (탭 영역 앱커 → 상세 콘텐츠 오버레이) ---- */
+  function ImagePageOverlay({ hs, onClose }) {
+    useEffect(() => {
+      const onKey = (e) => { if (e.key === "Escape") onClose(); };
+      window.addEventListener("keydown", onKey);
+      return () => window.removeEventListener("keydown", onKey);
+    }, [onClose]);
+    return (
+      <div style={{ position: "fixed", inset: 0, zIndex: 950, background: "rgba(8,9,11,.9)", display: "flex", flexDirection: "column" }}>
+        <div style={{ flexShrink: 0, display: "flex", alignItems: "center", justifyContent: "space-between", gap: 16, padding: "14px 22px", borderBottom: "1px solid rgba(255,255,255,.10)" }}>
+          <div style={{ display: "flex", alignItems: "center", gap: 10, color: "#fff" }}>
+            <span style={{ fontSize: 11, fontWeight: 700, color: "var(--ws-black)", background: "var(--ws-mint)", padding: "3px 10px", borderRadius: 999 }}>{hs.title}</span>
+            <span style={{ fontSize: 12.5, color: "rgba(255,255,255,.55)" }}>‘{hs.title}’ 탭 선택 시 노출되는 콘텐츠</span>
+          </div>
+          <CloseBtn onClose={onClose} />
+        </div>
+        <div style={{ flex: 1, overflowY: "auto" }}>
+          <img src={hs.img} alt={hs.title} draggable={false} style={{ display: "block", width: "100%", height: "auto", background: "#fff" }} />
+        </div>
+      </div>
+    );
+  }
+  function Hotspots({ s, onOpen }) {
+    if (!s.hotspots) return null;
+    return s.hotspots.map((h, i) => (
+      <React.Fragment key={i}>
+        <button onClick={() => onOpen(h)} aria-label={h.label} title={h.label} style={{ position: "absolute", left: h.x + "%", top: h.y + "%", width: h.w + "%", height: h.h + "%", zIndex: 4, cursor: "pointer", border: "none", background: "transparent", padding: 0 }}></button>
+      </React.Fragment>
+    ));
+  }
+
   /* 인라인 화면 뷰어 */
   function ScreenViewer({ screen, side, setSide, onFullscreen, focus }) {
     const s = screen[side];
     const scrollRef = useRef(null);
     const [ai, setAi] = useState(false);
+    const [hs, setHs] = useState(null);
     const hasAi = side === "tobe" && s.splitView && s.splitView.aiScreen;
     const list = side === "tobe" ? screen.changes : screen.issues;
     const fb = focus && list && list[focus.idx] ? list[focus.idx] : null;
@@ -123,11 +155,13 @@
         <div ref={scrollRef} style={{ position: "relative", maxHeight: "calc(100vh - 250px)", minHeight: 360, overflowY: "auto", background: "var(--gray-50)" }}>
           <div style={{ position: "relative" }}>
             <img src={s.src} alt={s.label} draggable={false} style={{ display: "block", width: "100%", height: "auto" }} />
+            <Hotspots s={s} onOpen={setHs} />
             {fb && fb.box && <HighlightMark at={{ x: fb.box.x + fb.box.w / 2, y: fb.box.y + fb.box.h / 2 }} label={fb.label} n={focus.idx + 1} tone={side === "tobe" ? "change" : "issue"} />}
           </div>
           {side === "asis" && <EndNote text={s.endNote} />}
         </div>
         {ai && <AIReviewOverlay onClose={() => setAi(false)} />}
+        {hs && <ImagePageOverlay hs={hs} onClose={() => setHs(null)} />}
       </div>
     );
   }
@@ -334,6 +368,7 @@
   /* 전체화면 모달 */
   function FullscreenModal({ screen, side, setSide, onClose, onGo }) {
     const s = screen[side];
+    const [hs, setHs] = useState(null);
     const isFilm = side === "tobe" && !!s.heroVideo;
     const isSplit = side === "tobe" && !!s.splitView;
 
@@ -362,6 +397,7 @@
           <div style={{ flex: 1, overflowY: "auto", position: "relative" }}>
             <div style={{ position: "relative", width: "100%", marginTop: 0 }}>
               <img src={s.src} alt={s.label} draggable={false} style={{ display: "block", width: "100%", height: "auto", background: "#fff" }} />
+              <Hotspots s={s} onOpen={setHs} />
               {s.annots && s.annots.map((a, i) => (
                 <div key={i} style={{ position: "absolute", left: a.x + "%", top: a.y + "%", transform: "translateX(-50%)", zIndex: 4, display: "flex", flexDirection: "column", alignItems: "center", pointerEvents: "none" }}>
                   <span style={{ width: 2, height: (a.h || 18), background: "var(--ws-mint)" }}></span>
@@ -372,6 +408,7 @@
             </div>
           </div>
         )}
+        {hs && <ImagePageOverlay hs={hs} onClose={() => setHs(null)} />}
       </div>
     );
   }

@@ -47,6 +47,7 @@
     const node =
     <span>{it.label}
         {it.xmark && <sup style={{ fontSize: 9, fontWeight: 800, color: "var(--ws-mint)", marginLeft: 2 }}>X</sup>}
+        {it.isNew && <sup style={{ fontSize: 8.5, fontWeight: 800, letterSpacing: "0.06em", color: "var(--mint-700, #1FA089)", marginLeft: 3 }}>NEW</sup>}
         {it.tag && <span style={{ fontSize: 10.5, fontWeight: 600, color: "var(--text-faint)", marginLeft: 5 }}>({it.tag})</span>}
       </span>;
 
@@ -64,11 +65,16 @@
   }
 
   /* ---- GNB (검정 바) + 메가메뉴 ---- */
+  const MEGA_WIDE = {
+    "함께 만드는 로봇 시대": "Frame 2116930338.png",
+    "웰니스 로봇": "gnb_image.png",
+  };
+
   function Gnb({ selected, onSelect }) {
     const [open, setOpen] = useState(null);
     const hasScreen = (it) => it.screen === selected || it.children && it.children.some((c) => c.screen === selected);
     return (
-      <header style={{ position: "sticky", top: 0, zIndex: 300, background: "var(--ws-black)", borderBottom: "1px solid rgba(255,255,255,.08)" }}>
+      <header style={{ position: "sticky", top: 0, zIndex: 300, background: "rgba(58,58,58,.97)", backdropFilter: "blur(14px)", WebkitBackdropFilter: "blur(14px)", borderBottom: "1px solid rgba(255,255,255,.07)" }}>
         <div style={{ maxWidth: 1320, margin: "0 auto", height: 62, padding: "0 var(--gutter)", display: "grid", gridTemplateColumns: "1fr auto 1fr", alignItems: "center" }}>
           <button onClick={() => {onSelect("home");window.scrollTo({ top: 0 });}} style={{ justifySelf: "start", display: "flex", background: "none", border: "none", cursor: "pointer", padding: 0 }}><Logo /></button>
 
@@ -76,27 +82,52 @@
             {GNB.map((m, idx) => {
               const isActive = m.items.some(hasScreen) || m.to && m.to === selected;
               const isOpen = open === idx;
-              const last = idx === GNB.length - 1;
-              const panelPos = idx === 0 ? { left: 0 } : last ? { right: 0 } : { left: "50%", transform: "translateX(-50%)" };
+              const wide = MEGA_WIDE[m.name];
+              const panelPos = { left: 0 };
               const hasDesc = m.items.some((it) => it.desc);
               return (
                 <div key={m.name} onMouseEnter={() => setOpen(idx)} onMouseLeave={() => setOpen(null)}
-                style={{ position: "relative", display: "flex", alignItems: "center" }}>
+                style={{ position: wide ? "static" : "relative", display: "flex", alignItems: "center" }}>
                   <button onClick={() => {if (m.to) {onSelect(m.to);setOpen(null);}}} style={{
                     position: "relative",
                     display: "inline-flex", alignItems: "center", gap: 0, background: "none", border: "none", cursor: m.to ? "pointer" : "default",
                     padding: "0 14px", height: 62, fontFamily: "inherit",
                     fontSize: 14.5, fontWeight: 700, letterSpacing: "-0.01em", whiteSpace: "nowrap",
-                    color: isActive || isOpen ? "#fff" : "rgba(255,255,255,.62)"
+                    color: isActive || isOpen ? "var(--ws-mint)" : "rgba(255,255,255,.85)"
                   }}>
                     <span style={{ position: "relative" }}>
                       {m.name}
                       {m.isNew && <sup style={{ fontSize: 8.5, fontWeight: 800, letterSpacing: "0.06em", color: "var(--ws-mint)", marginLeft: 2 }}>NEW</sup>}
                     </span>
-                    {isActive && <span style={{ position: "absolute", left: 14, right: 14, bottom: 0, height: 2, background: "var(--ws-mint)" }}></span>}
+                    {isActive && <span style={{ position: "absolute", left: "50%", transform: "translateX(-50%)", bottom: 9, height: 1.5, width: 26, background: "var(--ws-mint)" }}></span>}
                   </button>
 
-                  {isOpen && m.items.length > 0 &&
+                  {isOpen && m.items.length > 0 && wide &&
+                  <div style={{ position: "absolute", top: 62, left: 0, right: 0, background: "rgba(52,52,52,.97)", backdropFilter: "blur(18px)", WebkitBackdropFilter: "blur(18px)", borderTop: "1px solid rgba(255,255,255,.05)", borderBottom: "1px solid rgba(255,255,255,.07)", boxShadow: "0 34px 70px rgba(0,0,0,.45)" }}>
+                      <div style={{ maxWidth: 1320, margin: "0 auto", padding: "22px var(--gutter) 26px", display: "grid", gridTemplateColumns: "minmax(0,1fr) minmax(240px,340px)", gap: "clamp(28px,4vw,72px)", alignItems: "center" }}>
+                        <div>
+                          <div style={{ fontSize: 22, fontWeight: 700, letterSpacing: "-0.02em", color: "#fff", marginBottom: 10 }}>{m.name}</div>
+                          <div style={{ display: "flex", flexDirection: "column", gap: 2 }}>
+                            {m.items.map((it) => {
+                              const clickable = !!it.screen;
+                              const on = clickable && it.screen === selected;
+                              return (
+                                <button key={it.label} disabled={!clickable} onClick={() => { if (clickable) { onSelect(it.screen); setOpen(null); } }}
+                                onMouseEnter={(e) => { if (clickable) e.currentTarget.style.color = "var(--ws-mint)"; }}
+                                onMouseLeave={(e) => { if (clickable) e.currentTarget.style.color = on ? "var(--ws-mint)" : "#fff"; }}
+                                style={{ display: "flex", alignItems: "baseline", gap: 18, background: "none", border: "none", padding: "5px 0", textAlign: "left", cursor: clickable ? "pointer" : "default", fontFamily: "inherit",
+                                  fontSize: 14.5, fontWeight: 700, letterSpacing: "-0.01em", color: on ? "var(--ws-mint)" : clickable ? "#fff" : "rgba(255,255,255,.45)", transition: "color var(--dur-fast) var(--ease-out)" }}>
+                                  <span>{it.label}{it.isNew && <sup style={{ fontSize: 8.5, fontWeight: 800, letterSpacing: "0.06em", color: "var(--ws-mint)", marginLeft: 3 }}>NEW</sup>}</span>
+                                  {it.desc && <span style={{ fontSize: 11.5, fontWeight: 400, fontStyle: "italic", color: "rgba(255,255,255,.4)", letterSpacing: "0" }}>{it.desc}</span>}
+                                </button>);
+                            })}
+                          </div>
+                        </div>
+                        <img src={wide} alt="" style={{ display: "block", width: "100%", height: "auto", borderRadius: 12, justifySelf: "end" }} />
+                      </div>
+                    </div>
+                  }
+                  {isOpen && m.items.length > 0 && !wide &&
                   <div style={{
                     position: "absolute", top: 62, ...panelPos,
                     width: hasDesc ? 326 : 252, padding: "10px 8px", background: "#fff", borderRadius: "var(--radius-md)",
@@ -905,6 +936,9 @@
   /* ---- 화면 스테이지 (단일 이미지 페이지 · 토글 없음) ---- */
   function PageStage({ screen }) {
     const [full, setFull] = useState(false);
+    const pages = screen.pages || null;
+    const [pi, setPi] = useState(0);
+    const cur = pages ? pages[pi] : screen;
     return (
       <React.Fragment>
         <div style={{ display: "flex", alignItems: "baseline", gap: 10, marginBottom: 14, flexWrap: "wrap" }}>
@@ -915,18 +949,21 @@
         <div style={{ borderRadius: "var(--radius-card)", overflow: "hidden", border: "1px solid var(--border-subtle)", boxShadow: "var(--shadow-card)", background: "var(--surface-card)" }}>
           <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 12, padding: "12px 16px", borderBottom: "1px solid var(--border-subtle)" }}>
             <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-              <span style={{ fontSize: 11, fontWeight: 700, color: "var(--ws-black)", background: "var(--ws-mint)", padding: "3px 10px", borderRadius: 999 }}>리뉴얼</span>
+              <span style={{ fontSize: 11, fontWeight: 700, color: screen.stageTag === "고도몰" ? "#fff" : "var(--ws-black)", background: screen.stageTag === "고도몰" ? "var(--ws-black)" : "var(--ws-mint)", padding: "3px 10px", borderRadius: 999 }}>{screen.stageTag || "리뉴얼"}</span>
+              {pages && <div style={{ display: "flex", gap: 4, marginLeft: 8, padding: 3, borderRadius: 999, background: "var(--gray-100)" }}>
+                {pages.map((p, i) => <button key={p.label} onClick={() => setPi(i)} style={{ padding: "5px 14px", borderRadius: 999, border: "none", cursor: "pointer", fontFamily: "inherit", fontSize: 12.5, fontWeight: 700, background: pi === i ? "var(--surface-card)" : "transparent", color: pi === i ? "var(--text-strong)" : "var(--text-muted)", boxShadow: pi === i ? "var(--shadow-card)" : "none" }}>{p.label}</button>)}
+              </div>}
             </div>
             <button onClick={() => setFull(true)} style={{ display: "inline-flex", alignItems: "center", gap: 7, cursor: "pointer", padding: "8px 14px", borderRadius: "var(--radius-pill)", border: "1px solid var(--border-default)", background: "var(--surface-card)", color: "var(--text-strong)", fontSize: 13, fontWeight: 700 }}>
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M8 3H5a2 2 0 0 0-2 2v3M16 3h3a2 2 0 0 1 2 2v3M21 16v3a2 2 0 0 1-2 2h-3M3 16v3a2 2 0 0 0 2 2h3" /></svg>
               전체화면
             </button>
           </div>
-          <div style={{ maxHeight: "calc(100vh - 230px)", minHeight: 360, overflowY: "auto", background: "var(--gray-50)" }}>
-            <img src={screen.src} alt={screen.title} draggable={false} style={{ display: "block", width: "100%", height: "auto" }} />
+          <div key={pages ? pi : "one"} style={{ maxHeight: "calc(100vh - 230px)", minHeight: 360, overflowY: "auto", background: "var(--gray-50)" }}>
+            <img src={cur.src} alt={screen.title} draggable={false} style={{ display: "block", width: "100%", height: "auto" }} />
           </div>
         </div>
-        {full && <PageFullscreen screen={screen} onClose={() => setFull(false)} />}
+        {full && <PageFullscreen screen={{ ...screen, src: cur.src }} onClose={() => setFull(false)} />}
       </React.Fragment>);
 
   }
