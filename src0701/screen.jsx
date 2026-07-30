@@ -112,9 +112,27 @@
   }
 
   /* 특정 구간 확대 보기 — 집중해서 봐야 하는 상세 원본 크롭 */
-  function ZoomFocus({ s, box, label, n, zoom, onClose, step, total, mark }) {
+  function ZoomFocus({ s, box, label, n, zoom, onClose, step, total, mark, scrollTo, scrollDur, onScrollEnd }) {
     const wrapRef = useRef(null);
     const [w, setW] = useState(0);
+    const [offY, setOffY] = useState(box.y);
+    useEffect(() => { setOffY(box.y); }, [box.y, box.x]);
+    useEffect(() => {
+      if (scrollTo == null) return;
+      let raf = 0, dead = false;
+      const from = box.y, to = scrollTo, dur = scrollDur || 5200;
+      const t0 = setTimeout(() => {
+        const start = performance.now();
+        const step2 = (now) => {
+          if (dead) return;
+          const p = Math.min(1, (now - start) / dur);
+          setOffY(from + (to - from) * p);
+          if (p < 1) raf = requestAnimationFrame(step2);else if (onScrollEnd) onScrollEnd();
+        };
+        raf = requestAnimationFrame(step2);
+      }, 500);
+      return () => { dead = true; clearTimeout(t0); cancelAnimationFrame(raf); };
+    }, [scrollTo, box.y]);
     useEffect(() => {
       const el = wrapRef.current; if (!el) return;
       const measure = () => setW(el.clientWidth);
@@ -136,7 +154,7 @@
             <button onClick={onClose} style={{ marginLeft: "auto", cursor: "pointer", padding: "7px 13px", borderRadius: "var(--radius-pill)", border: "1px solid var(--border-default)", background: "var(--surface-card)", color: "var(--text-strong)", fontSize: 12.5, fontWeight: 700, fontFamily: "inherit", whiteSpace: "nowrap", flexShrink: 0 }}>전체 보기</button>
           </div>
           <div style={{ position: "relative", width: "100%", height: cropH || 240, overflow: "hidden", borderRadius: 14, border: "1.5px solid var(--ws-black)", boxShadow: "0 18px 44px rgba(8,10,14,.16)", background: "#fff" }}>
-            {w > 0 && <img src={s.src} alt={label} draggable={false} style={{ position: "absolute", width: imgW, maxWidth: "none", height: "auto", left: -(box.x / 100) * imgW, top: -(box.y / 100) * imgH, display: "block" }} />}
+            {w > 0 && <img src={s.src} alt={label} draggable={false} style={{ position: "absolute", width: imgW, maxWidth: "none", height: "auto", left: -(box.x / 100) * imgW, top: -(offY / 100) * imgH, display: "block" }} />}
             {w > 0 && mark && <span aria-hidden="true" style={{ position: "absolute", left: (mark.x - box.x) / 100 * imgW, top: (mark.y - box.y) / 100 * imgH, width: mark.w / 100 * imgW, height: mark.h / 100 * imgH, border: "2px solid var(--ws-mint)", borderRadius: 8, boxShadow: "0 0 0 3px rgba(133,225,210,.28)", pointerEvents: "none" }}></span>}
           </div>
         </div>
@@ -267,7 +285,7 @@
           <div style={{ position: "relative" }}>
             <img src={s.src} alt={s.label} draggable={false} style={{ display: "block", width: "100%", height: "auto" }} />
             <Hotspots s={s} onOpen={setHs} />
-            {fb && fb.box && !sweeping && <HighlightMark at={{ x: fb.box.x + fb.box.w / 2, y: fb.box.y + fb.box.h / 2 }} label={fb.label} n={focus.idx + 1} tone={side === "tobe" ? "change" : "issue"} />}
+            {fb && fb.box && !sweeping && <HighlightMark at={{ x: fb.box.x + fb.box.w / 2, y: (fb.zoomScrollTo != null && zoomOff === (focus && focus.key) ? fb.zoomScrollTo : fb.box.y) + fb.box.h / 2 }} label={fb.label} n={focus.idx + 1} tone={side === "tobe" ? "change" : "issue"} />}
           </div>
           {side === "asis" && <EndNote text={s.endNote} />}
         </div>
@@ -276,6 +294,16 @@
         label={fb.zoomSeq ? fb.zoomSeq[Math.min(seqI, fb.zoomSeq.length - 1)].label || fb.label : fb.label}
         n={focus.idx + 1} zoom={fb.zoom || 1} onClose={() => setZoomOff(focus.key)}
         mark={fb.zoomSeq ? fb.zoomSeq[Math.min(seqI, fb.zoomSeq.length - 1)].mark : fb.zoomMark}
+        scrollTo={fb.zoomScrollTo} scrollDur={fb.zoomScrollDur}
+        onScrollEnd={() => {
+          const el = scrollRef.current;
+          if (el) {
+            const base = el.clientWidth * (s.ratio || 1);
+            const cy = fb.zoomScrollTo + fb.box.h / 2;
+            el.scrollTo({ top: Math.max(0, cy / 100 * base - el.clientHeight / 2), behavior: "smooth" });
+          }
+          setZoomOff(focus.key);
+        }}
         step={fb.zoomSeq ? Math.min(seqI, fb.zoomSeq.length - 1) + 1 : null} total={fb.zoomSeq ? fb.zoomSeq.length : null} />}
         {ai && <AIReviewOverlay onClose={() => setAi(false)} />}
         {hs && <ImagePageOverlay hs={hs} onClose={() => setHs(null)} />}
@@ -467,8 +495,7 @@
     );
     return (
       <div style={{ flex: 1, display: "flex", flexDirection: "column", minHeight: 0, position: "relative" }}>
-        {/* GNB 통째로 */}
-        <img src={sv.gnb} alt="GNB" draggable={false} style={{ display: "block", width: "100%", height: "auto", flexShrink: 0, borderBottom: "1px solid rgba(255,255,255,.12)" }} />
+        {/* GNB는 전체화면에서 생략 */}
         {/* 본문 좌우 분할 (푸터 제외) */}
         <div style={{ flex: 1, display: "flex", minHeight: 0, position: "relative" }}>
           <Col half="left" label={sv.left} />

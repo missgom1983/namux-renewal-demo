@@ -93,9 +93,9 @@
               return (
                 <div key={m.name} onMouseEnter={() => setOpen(idx)} onMouseLeave={() => setOpen(null)}
                 style={{ position: wide ? "static" : "relative", display: "flex", alignItems: "center" }}>
-                  <button onClick={() => {if (m.to) {onSelect(m.to);setOpen(null);}}} onMouseEnter={() => setHovItem("::title::" + m.name)} onMouseLeave={() => setHovItem(null)} style={{
+                  <button onClick={() => {if (m.to && !wide) {onSelect(m.to);setOpen(null);}}} onMouseEnter={() => setHovItem("::title::" + m.name)} onMouseLeave={() => setHovItem(null)} style={{
                     position: "relative",
-                    display: "inline-flex", alignItems: "center", gap: 0, background: "none", border: "none", cursor: m.to ? "pointer" : "default",
+                    display: "inline-flex", alignItems: "center", gap: 0, background: "none", border: "none", cursor: m.to && !wide ? "pointer" : "default",
                     padding: "0 14px", height: 62, fontFamily: "inherit",
                     fontSize: 14.5, fontWeight: 700, letterSpacing: "-0.01em", whiteSpace: "nowrap",
                     color: isActive || isOpen ? "var(--ws-mint)" : "rgba(255,255,255,.85)"
@@ -120,14 +120,15 @@
                             {m.items.map((it) => {
                               const clickable = !!it.screen;
                               const on = clickable && it.screen === selected;
+                              const hov = hovItem === it.label;
                               return (
                                 <button key={it.label} onClick={() => { if (clickable) { onSelect(it.screen); setOpen(null); } }}
-                                onMouseEnter={(e) => { setHovItem(it.label); if (clickable) e.currentTarget.style.color = "var(--ws-mint)"; }}
-                                onMouseLeave={(e) => { setHovItem(null); if (clickable) e.currentTarget.style.color = on ? "var(--ws-mint)" : "#fff"; }}
-                                style={{ display: "flex", alignItems: "baseline", gap: 18, background: "none", border: "none", padding: "5px 0", textAlign: "left", cursor: clickable ? "pointer" : "default", fontFamily: "inherit",
-                                  fontSize: 14.5, fontWeight: 700, letterSpacing: "-0.01em", color: on ? "var(--ws-mint)" : clickable ? "#fff" : "rgba(255,255,255,.45)", transition: "color var(--dur-fast) var(--ease-out)" }}>
-                                  <span>{it.label}{it.isNew && <sup style={{ fontSize: 8.5, fontWeight: 800, letterSpacing: "0.06em", color: hovItem === it.label ? "#fff" : "var(--ws-mint)", marginLeft: 3, transition: "color var(--dur-fast) var(--ease-out)" }}>NEW</sup>}</span>
-                                  {it.desc && <span style={{ fontSize: 11.5, fontWeight: 400, fontStyle: "italic", color: "rgba(255,255,255,.4)", letterSpacing: "0", opacity: !it.descOnHover || hovItem === it.label ? 1 : 0, transition: "opacity var(--dur-fast) var(--ease-out)" }}>{it.desc}</span>}
+                                onMouseEnter={() => setHovItem(it.label)}
+                                onMouseLeave={() => setHovItem(null)}
+                                style={{ display: "flex", alignItems: "baseline", gap: 18, background: hov ? "rgba(255,255,255,.06)" : "none", border: "none", borderRadius: 8, padding: "6px 10px", margin: "0 -10px", textAlign: "left", cursor: clickable ? "pointer" : "default", fontFamily: "inherit",
+                                  fontSize: 14.5, fontWeight: 700, letterSpacing: "-0.01em", color: on || hov ? "var(--ws-mint)" : clickable ? "#fff" : "rgba(255,255,255,.62)", transition: "color var(--dur-fast) var(--ease-out), background var(--dur-fast) var(--ease-out)" }}>
+                                  <span>{it.label}{it.isNew && <sup style={{ fontSize: 8.5, fontWeight: 800, letterSpacing: "0.06em", color: hov ? "#fff" : "var(--ws-mint)", marginLeft: 3, transition: "color var(--dur-fast) var(--ease-out)" }}>NEW</sup>}</span>
+                                  {it.desc && <span style={{ fontSize: 11.5, fontWeight: 400, fontStyle: "italic", color: hov ? "rgba(255,255,255,.9)" : "rgba(255,255,255,.68)", letterSpacing: "0", opacity: !it.descOnHover || hov ? 1 : 0, transition: "opacity var(--dur-fast) var(--ease-out), color var(--dur-fast) var(--ease-out)" }}>{it.desc}</span>}
                                 </button>);
                             })}
                           </div>
@@ -237,7 +238,7 @@
         <div style={{ display: "grid", gridTemplateColumns: "minmax(0,1.55fr) minmax(280px,1fr)", gap: 32, alignItems: "start" }}>
           <ScreenViewer screen={screen} side={side} setSide={setSide} onFullscreen={() => onFullscreen(side, setSide)} focus={focus} onFocusIdx={(i) => setFocus({ idx: i, key: Date.now() })} />
           <div style={{ position: "sticky", top: 24 }}>
-            <ChangeList side={side} screen={screen} focus={focus} onPick={(i) => setFocus({ idx: i, key: Date.now() })} />
+            <ChangeList side={side} screen={screen} focus={focus} onPick={(i) => setFocus((f) => f && f.idx === i ? null : { idx: i, key: Date.now() })} />
           </div>
         </div>
       </React.Fragment>);

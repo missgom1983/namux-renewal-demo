@@ -70,9 +70,8 @@
               hotspots: [{ x: 11, y: 32.4, w: 6.8, h: 1.9, label: "제품 상세 보기", img: "assets/tobe-pdp-body.png", title: "제품 상세" }],
               splitView: { left: "제품 체험", right: "구독 설계 / 구매", gnb: "assets/tobe-pdp-gnb.png", body: "assets/tobe-pdp-body-main.png", footer: "assets/tobe-pdp-footer.png", aiScreen: "ai" } },
       issues: [
-        { label: "톤앤매너 — 다크 단일 컬럼", desc: "체험과 구매가 한 줄로 쌓여 가독성과 집중도 저하", sweep: true, sweepSpeed: 0.32, sweepSpeedEnd: 1.1, sweepStops: [{ y: 38, hold: 0 }], box: { x: 2, y: 95, w: 96, h: 4 } },
-        { label: "가격 설득 — 혜택 모듈 부족", desc: "제휴, 무이자 등 혜택이 정리되어 있지 않음", zoom: 1, box: { x: 64, y: 1.5, w: 30, h: 19 } },
-        { label: "제품 체험/리뷰 — 텍스트/별점 위주", desc: "영상 및 요약 없이 긴 텍스트 리뷰가 이어짐", zoom: 1, box: { x: 13, y: 68, w: 68, h: 9 } },
+        { label: "톤앤매너 — 다크 단일 컬럼", desc: "체험과 구매가 한 줄로 쌓여 가독성과 집중도 저하\n제품 이미지, 혜택, 리뷰가 스크롤 단위로 흩어져 구독에 필요한 정보를 한 화면에서 비교하기 어려움", sweep: true, sweepSpeed: 0.32, sweepSpeedEnd: 1.1, sweepStops: [{ y: 38, hold: 0 }], box: { x: 2, y: 95, w: 96, h: 4 } },
+        { label: "제품 체험/리뷰 — 텍스트/별점 위주", desc: "영상 및 요약 없이 긴 텍스트 리뷰가 이어짐", zoom: 1, box: { x: 13, y: 68.6, w: 68, h: 7.5 } },
       ],
       changes: [
         { label: "톤앤매너 — 라이트톤 변경", desc: "가독성 최우선 고려", sweep: true, sweepSpeed: 0.32, box: { x: 2, y: 92, w: 96, h: 4 } },
@@ -218,7 +217,6 @@
       tobe: { src: "Frame 2116930399.jpg", ratio: 9670 / 1920, tag: "TO-BE", label: "리뉴얼", caption: "브랜드 필름 + HUMAN 타이포 서사 + 파트너 신뢰 요소" },
       issues: [
         { label: "톤앤매너 — 다크톤 적용", desc: "다크 배경 위 저대비 텍스트로 핵심 메시지가 묻힘", sweep: true, sweepSpeed: 0.32, sweepSpeedEnd: 1.1, sweepStops: [{ y: 35, hold: 0 }], box: { x: 2, y: 95, w: 96, h: 4 } },
-        { label: "브랜드 자산 — 진입 경로 노출 약함", desc: "브랜드 자산으로 가는 링크가 눈에 띄지 않음", zoom: 1, box: { x: 20, y: 0.4, w: 60, h: 2.2 } },
       ],
       changes: [
         { label: "톤앤매너 — 가독성 중심 개선", desc: "전체 페이지를 훑어보며 개선된 톤앤매너 확인", sweep: true, sweepSpeed: 0.3, box: { x: 2, y: 95, w: 96, h: 4 } },
@@ -232,10 +230,10 @@
       asis: { src: "(고도몰)브랜드자산_260618.png".normalize("NFC"), ratio: 9757 / 1920, tag: "AS-IS", label: "고도몰", caption: "라이트 UI 위 자산 아카이브식 나열" },
       tobe: { src: "03.브랜드_02.브랜드자산.jpg".normalize("NFC"), ratio: 8594 / 1920, tag: "TO-BE", label: "리뉴얼", caption: "브랜드 필름 + 다크 무드 + 사이드 내비게이션" },
       issues: [
-        { label: "톤앤매너 — 라이트 UI와 다크 자산 혼재", desc: "배경과 자산의 무드가 달라 브랜드 몰입 저하", sweep: true, sweepSpeed: 0.3, box: { x: 2, y: 95, w: 96, h: 4 } },
+        { label: "톤앤매너 — 다크모드와 어려운 진입 경로", desc: "배경과 자산의 무드가 달라 브랜드 몰입 저하", sweep: true, sweepSpeed: 0.3, box: { x: 2, y: 95, w: 96, h: 4 } },
       ],
       changes: [
-        { label: "톤앤매너 — 다크 단일 무드", desc: "자산과 배경 톤을 통일해 브랜드 몰입 강화", sweep: true, sweepSpeed: 0.3, box: { x: 2, y: 95, w: 96, h: 4 } },
+        { label: "톤앤매너 — 라이트 단일 무드 가독성 개선", desc: "자산과 배경 톤을 통일해 브랜드 몰입 강화", sweep: true, sweepSpeed: 0.3, box: { x: 2, y: 95, w: 96, h: 4 } },
       ],
     },
     growx: {
@@ -252,9 +250,9 @@
       ],
       changes: [
         { label: "대표 업데이트 하이라이트", desc: "이 달의 업데이트를 영상 배너로 전면 노출", zoom: 1, box: { x: 12, y: 22, w: 76, h: 14 } },
-        { label: "월별 필터/검색", desc: "연/월 단위 드롭다운 + 검색으로 지난 업데이트 탐색", zoom: 1, box: { x: 50, y: 36.3, w: 38, h: 11 } },
         { label: "카드 목록 — 썸네일/제목/날짜", desc: "업데이트별 카드형 목록, 페이지네이션으로 탐색", zoom: 1, box: { x: 12, y: 40.8, w: 76, h: 24.5 } },
-        { label: "이메일 구독 — 재방문 유도", desc: "새 업데이트 발생 시 메일 발송 → OTA 가치를 구독 근거로 전환", zoom: 1, box: { x: 12, y: 69, w: 76, h: 7.5 } },
+        { label: "월별 필터/검색", desc: "연/월 단위 드롭다운 + 검색으로 지난 업데이트 탐색", zoom: 1, box: { x: 50, y: 36.3, w: 38, h: 11 } },
+        { label: "이메일 구독 — 재방문 유도", desc: "새 업데이트 발생 시 메일 발송 → OTA 가치를 구독 근거로 전환", zoom: 1, box: { x: 12, y: 69.5, w: 76, h: 6.5 } },
       ],
     },
     together: {
@@ -350,10 +348,10 @@
   // GNB 2depth — 스크린샷 IA 기준. desc=설명(기울임), tag=가칭, pre=오픈이후(빨강), xmark=X마크, children=하위
   const GNB = [
     { name: "웰니스 로봇", to: "robot", isNew: true, strategyTag: "가치 인지 | Awareness", strategy: "웰니스 로봇이 어떤 존재인지 이해시키는 공간", items: [
-      { label: "처음 만나는 웰니스 로봇", descOnHover: true, desc: "로봇이 처음인 고객을 위한 웰니스 로봇 오버뷰", screen: "welcome" },
-      { label: "빈틈없는 공간 케어", descOnHover: true, desc: "에어솔루션, 세이프케어, 라이브뷰 등" },
-      { label: "나를 위한 맞춤 케어", descOnHover: true, desc: "마이헬스케어, 바이탈, 컴패니언 등" },
-      { label: "매일 진화하는 AI", descOnHover: true, desc: "OTA, 데이터 초 개인화, 생태계 등" },
+      { label: "처음 만나는 웰니스 로봇", descOnHover: true, desc: "로봇이 처음인 고객을 위한 오버뷰 — 나무엑스가 집안에서 무엇을 하는지, 왜 웰니스 로봇인지를 한 흐름으로 안내" },
+      { label: "빈틈없는 공간 케어", descOnHover: true, desc: "스스로 움직이며 집 전체를 살피는 공간 케어 — 에어솔루션, 세이프케어, 라이브뷰" },
+      { label: "나를 위한 맞춤 케어", descOnHover: true, desc: "가족 한 사람 한 사람을 기억하는 개인 케어 — 마이헬스케어, 바이탈 체크, AI 컴패니언" },
+      { label: "매일 진화하는 AI", descOnHover: true, desc: "사용할수록 똑똑해지는 로봇 — OTA 업데이트, 데이터 기반 초개인화, 파트너 생태계 확장" },
     ]},
     { name: "스토어", to: "store", strategyTag: "구매 전환 | Conversion", strategy: "구매에 필요한 모든 것을 한곳에 모은 구매 전용 공간", items: [
       { label: "제품", screen: "store", children: [
@@ -395,7 +393,7 @@
     { name: "함께 만드는 로봇 시대", to: "roboEraHub", isNew: true, strategyTag: "유입&체류 | Engagement", strategy: "고객과 함께 로봇 시대를 만들어가는 참여 공간", items: [
       { label: "로봇과 사는 시대", descOnHover: true, desc: "로봇과 함께하는 일상을 보여주는 브랜드 스토리", screen: "robotEra" },
       { label: "나무엑스 꾸미기", descOnHover: true, desc: "고객이 참여해 나무엑스를 꾸미는 창작 공간", screen: "imagine" },
-      { label: "함께 만드는 나무엑스", pre: "(오픈 이후)", descOnHover: true, desc: "고객 참여로 함께 키워가는 팬 커뮤니티", screen: "together" },
+      { label: "함께 만드는 나무엑스", pre: "(오픈 이후)", descOnHover: true, desc: "고객 참여로 함께 키워가는 팬 커뮤니티 (향후 해커톤 연계, 아이디어 투표 및 좋아요 기능 추가, 커뮤니티 등급 제도 운영 등 오픈 이후 순차 개발 진행 예정)", screen: "together" },
       { label: "나무엑스 이야기", descOnHover: true, desc: "소식과 이야기를 전하는 블로그 (GEO/SEO, 총 11개팀 참여, 런칭 전 50개, 연내 100개 콘텐츠 업로드, 향후 팬 커뮤니티 우수회원을 외부 기고자로 확대 예정)", screen: "diary" },
     ]},
   ];
