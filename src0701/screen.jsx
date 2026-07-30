@@ -111,18 +111,129 @@
     ));
   }
 
+  /* 특정 구간 확대 보기 — 집중해서 봐야 하는 상세 원본 크롭 */
+  function ZoomFocus({ s, box, label, n, zoom, onClose, step, total, mark }) {
+    const wrapRef = useRef(null);
+    const [w, setW] = useState(0);
+    useEffect(() => {
+      const el = wrapRef.current; if (!el) return;
+      const measure = () => setW(el.clientWidth);
+      measure();
+      window.addEventListener("resize", measure);
+      return () => window.removeEventListener("resize", measure);
+    }, []);
+    const z = zoom === true ? 1 : zoom || 1;
+    const imgW = w ? w * (100 / box.w) * z : 0;
+    const imgH = imgW * (s.ratio || 1);
+    const cropH = (box.h / 100) * imgH;
+    return (
+      <div onClick={onClose} style={{ position: "absolute", inset: 0, zIndex: 40, cursor: "zoom-out", background: "rgba(248,249,250,.94)", backdropFilter: "blur(3px)", display: "flex", alignItems: "center", justifyContent: "center", padding: 22, boxSizing: "border-box" }}>
+        <div ref={wrapRef} style={{ width: "100%", maxWidth: 900 }}>
+          <div style={{ display: "flex", alignItems: "center", gap: 9, marginBottom: 12, whiteSpace: "nowrap" }}>
+            <span style={{ width: 22, height: 22, borderRadius: "50%", background: "var(--ws-mint)", color: "var(--ws-black)", fontSize: 12, fontWeight: 800, display: "inline-flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>{n}</span>
+            <strong style={{ fontSize: 14.5, letterSpacing: "-0.01em", color: "var(--text-strong)" }}>{label}</strong>
+            <span style={{ fontSize: 12, color: "var(--text-faint)", flexShrink: 0 }}>{step ? step + " / " + total : "확대"}</span>
+            <button onClick={onClose} style={{ marginLeft: "auto", cursor: "pointer", padding: "7px 13px", borderRadius: "var(--radius-pill)", border: "1px solid var(--border-default)", background: "var(--surface-card)", color: "var(--text-strong)", fontSize: 12.5, fontWeight: 700, fontFamily: "inherit", whiteSpace: "nowrap", flexShrink: 0 }}>전체 보기</button>
+          </div>
+          <div style={{ position: "relative", width: "100%", height: cropH || 240, overflow: "hidden", borderRadius: 14, border: "1.5px solid var(--ws-black)", boxShadow: "0 18px 44px rgba(8,10,14,.16)", background: "#fff" }}>
+            {w > 0 && <img src={s.src} alt={label} draggable={false} style={{ position: "absolute", width: imgW, maxWidth: "none", height: "auto", left: -(box.x / 100) * imgW, top: -(box.y / 100) * imgH, display: "block" }} />}
+            {w > 0 && mark && <span aria-hidden="true" style={{ position: "absolute", left: (mark.x - box.x) / 100 * imgW, top: (mark.y - box.y) / 100 * imgH, width: mark.w / 100 * imgW, height: mark.h / 100 * imgH, border: "2px solid var(--ws-mint)", borderRadius: 8, boxShadow: "0 0 0 3px rgba(133,225,210,.28)", pointerEvents: "none" }}></span>}
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   /* 인라인 화면 뷰어 */
-  function ScreenViewer({ screen, side, setSide, onFullscreen, focus }) {
+  function ScreenViewer({ screen, side, setSide, onFullscreen, focus, onFocusIdx }) {
     const s = screen[side];
     const scrollRef = useRef(null);
     const [ai, setAi] = useState(false);
     const [hs, setHs] = useState(null);
+    const [sweeping, setSweeping] = useState(false);
+    const [zoomOff, setZoomOff] = useState(null);
+    const [seqI, setSeqI] = useState(0);
+
+    // 여러 구간을 순서대로 확대해 짚어준 뒤 확대를 닫고 앵커로 마무리
+    useEffect(() => {
+      const cur = focus && (side === "tobe" ? screen.changes : screen.issues) || null;
+      const item = cur && focus ? cur[focus.idx] : null;
+      if (!item || !item.zoomSeq) return;
+      setSeqI(0);
+      const hold = item.zoomHold || 2200;
+      let i = 0;
+      const id = setInterval(() => {
+        i += 1;
+        if (i >= item.zoomSeq.length) {
+          clearInterval(id);
+          const el = scrollRef.current;
+          if (el && item.box) {
+            const base = el.clientWidth * (s.ratio || 1);
+            const cy = item.box.y + item.box.h / 2;
+            el.scrollTo({ top: Math.max(0, cy / 100 * base - el.clientHeight / 2), behavior: "smooth" });
+          }
+          setZoomOff(focus.key); return;
+        }
+        setSeqI(i);
+      }, hold);
+      return () => clearInterval(id);
+    }, [focus, side]);
+
+    // AS-IS / TO-BE 전환 시 뷰어를 탭 맨 위로 돌림
+    useEffect(() => {
+      const el = scrollRef.current; if (el) el.scrollTo({ top: 0, behavior: "auto" });
+    }, [side]);
     const hasAi = side === "tobe" && s.splitView && s.splitView.aiScreen;
     const list = side === "tobe" ? screen.changes : screen.issues;
     const fb = focus && list && list[focus.idx] ? list[focus.idx] : null;
 
     useEffect(() => {
       if (!fb || !fb.box) return;
+      if (fb.sweep) {
+        // 전체 페이지를 일정한 속도로 훑어 내리며(지정 구간에서는 잠시 정지) 마지막에 앵커 표시
+        setSweeping(true);
+        let raf = 0, dead = false;
+        const t0 = setTimeout(() => {
+          const el = scrollRef.current; if (!el) { setSweeping(false); return; }
+          el.scrollTo({ top: 0, behavior: "auto" });
+          const base = el.clientWidth * (s.ratio || 1);
+          const max = Math.max(0, el.scrollHeight - el.clientHeight);
+          const yToTop = (y) => Math.max(0, Math.min(max, y / 100 * base - el.clientHeight / 2));
+          const speed = fb.sweepSpeed || 0.34; // px/ms — 일정 속도
+          const legs = [];
+          let from = 0;
+          (fb.sweepStops || []).forEach((st) => {
+            const to = yToTop(st.y);
+            legs.push({ from, to, hold: st.hold === undefined ? 1200 : st.hold, speed: st.speed || speed });
+            from = to;
+          });
+          legs.push({ from, to: yToTop(fb.box.y + fb.box.h / 2), hold: 0, speed: fb.sweepSpeedEnd || speed });
+
+          let li = 0, start = performance.now(), holding = false;
+          const step = (now) => {
+            if (dead) return;
+            const leg = legs[li];
+            const dist = Math.abs(leg.to - leg.from);
+            const dur = Math.max(500, dist / (leg.speed || speed));
+            if (holding) {
+              if (now - start >= leg.hold) { holding = false; li += 1; start = now;
+                if (li >= legs.length) { setSweeping(false); if (fb.sweepThen != null && onFocusIdx) onFocusIdx(fb.sweepThen); return; } }
+              raf = requestAnimationFrame(step); return;
+            }
+            const p = Math.min(1, (now - start) / dur);
+            const e = p; // 일정 속도(리니어) — 내용을 읽을 수 있게
+            el.scrollTop = leg.from + (leg.to - leg.from) * Math.min(1, e);
+            if (p < 1) { raf = requestAnimationFrame(step); return; }
+            el.scrollTop = leg.to;
+            if (leg.hold > 0) { holding = true; start = now; raf = requestAnimationFrame(step); return; }
+            li += 1; start = now;
+            if (li >= legs.length) { setSweeping(false); if (fb.sweepThen != null && onFocusIdx) onFocusIdx(fb.sweepThen); return; }
+            raf = requestAnimationFrame(step);
+          };
+          raf = requestAnimationFrame(step);
+        }, 180);
+        return () => { dead = true; clearTimeout(t0); cancelAnimationFrame(raf); setSweeping(false); };
+      }
       const t = setTimeout(() => {
         const el = scrollRef.current; if (!el) return;
         const img = el.querySelector("img");
@@ -156,10 +267,16 @@
           <div style={{ position: "relative" }}>
             <img src={s.src} alt={s.label} draggable={false} style={{ display: "block", width: "100%", height: "auto" }} />
             <Hotspots s={s} onOpen={setHs} />
-            {fb && fb.box && <HighlightMark at={{ x: fb.box.x + fb.box.w / 2, y: fb.box.y + fb.box.h / 2 }} label={fb.label} n={focus.idx + 1} tone={side === "tobe" ? "change" : "issue"} />}
+            {fb && fb.box && !sweeping && <HighlightMark at={{ x: fb.box.x + fb.box.w / 2, y: fb.box.y + fb.box.h / 2 }} label={fb.label} n={focus.idx + 1} tone={side === "tobe" ? "change" : "issue"} />}
           </div>
           {side === "asis" && <EndNote text={s.endNote} />}
         </div>
+        {fb && fb.box && (fb.zoom || fb.zoomSeq) && zoomOff !== (focus && focus.key) &&
+        <ZoomFocus s={s} box={fb.zoomSeq ? fb.zoomSeq[Math.min(seqI, fb.zoomSeq.length - 1)].box : fb.box}
+        label={fb.zoomSeq ? fb.zoomSeq[Math.min(seqI, fb.zoomSeq.length - 1)].label || fb.label : fb.label}
+        n={focus.idx + 1} zoom={fb.zoom || 1} onClose={() => setZoomOff(focus.key)}
+        mark={fb.zoomSeq ? fb.zoomSeq[Math.min(seqI, fb.zoomSeq.length - 1)].mark : fb.zoomMark}
+        step={fb.zoomSeq ? Math.min(seqI, fb.zoomSeq.length - 1) + 1 : null} total={fb.zoomSeq ? fb.zoomSeq.length : null} />}
         {ai && <AIReviewOverlay onClose={() => setAi(false)} />}
         {hs && <ImagePageOverlay hs={hs} onClose={() => setHs(null)} />}
       </div>
@@ -369,6 +486,10 @@
   function FullscreenModal({ screen, side, setSide, onClose, onGo }) {
     const s = screen[side];
     const [hs, setHs] = useState(null);
+    const fsScrollRef = useRef(null);
+    useEffect(() => {
+      const el = fsScrollRef.current; if (el) el.scrollTo({ top: 0, behavior: "auto" });
+    }, [side]);
     const isFilm = side === "tobe" && !!s.heroVideo;
     const isSplit = side === "tobe" && !!s.splitView;
 
@@ -394,7 +515,7 @@
           </div>
         </div>
         {isSplit ? <SplitView s={s} /> : (
-          <div style={{ flex: 1, overflowY: "auto", position: "relative" }}>
+          <div ref={fsScrollRef} style={{ flex: 1, overflowY: "auto", position: "relative" }}>
             <div style={{ position: "relative", width: "100%", marginTop: 0 }}>
               <img src={s.src} alt={s.label} draggable={false} style={{ display: "block", width: "100%", height: "auto", background: "#fff" }} />
               <Hotspots s={s} onOpen={setHs} />

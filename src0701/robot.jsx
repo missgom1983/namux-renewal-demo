@@ -1,5 +1,5 @@
 /* NAMUH X 리뉴얼 — '로봇' 메뉴 (스토리보드 v2.2)
-   window.RobotStage  —  C-level용: 의도 → 전략 → 오버뷰 + 역량1·2·3(현재/미래가치) → 운영 방식 */
+   window.RobotStage  —  C-level용: 의도 → 전략 → 오버뷰 + 역량1/2/3(현재/미래가치) → 운영 방식 */
 (function () {
   const { useState, useEffect } = React;
 
@@ -74,7 +74,7 @@
       <div style={{ position: "relative", padding: "clamp(34px,4.5vw,56px) var(--rb-gut)" }}>
         <div style={{ display: "inline-flex", alignItems: "center", gap: 8, marginBottom: 22, padding: "6px 14px", borderRadius: 999, background: "rgba(133,225,210,.1)", border: "1px solid rgba(133,225,210,.28)" }}>
           <span style={{ width: 6, height: 6, borderRadius: "50%", background: "var(--ws-mint)" }}></span>
-          <span style={{ fontSize: 12, fontWeight: 700, letterSpacing: "0.04em", color: "var(--ws-mint)" }}>핵심 요약 · ONE PAGE</span>
+          <span style={{ fontSize: 12, fontWeight: 700, letterSpacing: "0.04em", color: "var(--ws-mint)" }}>핵심 요약 / ONE PAGE</span>
         </div>
         <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(300px,1fr))", gap: "clamp(16px,2.5vw,24px)", alignItems: "stretch" }}>
           {/* 왜 */}
@@ -117,7 +117,7 @@
 
   }
 
-  /* ===== 한 화면 요약본 (인라인 · 스크롤 최소화) ===== */
+  /* ===== 한 화면 요약본 (인라인 / 스크롤 최소화) ===== */
   function RobotSummaryCompact({ screen }) {
     const st = screen.strategy,ov = screen.overview,caps = screen.caps,rm = screen.roadmap;
     const blocks = [ov, ...caps];
@@ -167,7 +167,7 @@
           </div>
         }
 
-        {/* HOW — 오버뷰 + 역량 1·2·3 (한눈에) */}
+        {/* HOW — 오버뷰 + 역량 1/2/3 (한눈에) */}
         <div style={{ position: "relative", marginTop: "clamp(22px,2.6vw,30px)" }}>
           <div style={{ display: "flex", alignItems: "baseline", gap: 10, marginBottom: 18 }}>
             <span style={{ fontSize: 11, fontWeight: 700, letterSpacing: "0.18em", color: "var(--ws-mint)" }}>Story</span>
@@ -222,7 +222,7 @@
         <div style={{ position: "relative", padding: "clamp(46px,6vw,80px) var(--rb-gut) clamp(20px,2.5vw,30px)", overflow: "hidden" }}>
           <div style={{ position: "absolute", top: -120, left: "50%", transform: "translateX(-50%)", width: 620, height: 340, background: "radial-gradient(ellipse, rgba(133,225,210,.14), transparent 68%)", pointerEvents: "none" }}></div>
           <div style={{ position: "relative", maxWidth: 860 }}>
-            <span style={{ fontSize: 12, fontWeight: 700, letterSpacing: "0.22em", color: "var(--ws-mint)" }}>NAMUHX · ROBOT</span>
+            <span style={{ fontSize: 12, fontWeight: 700, letterSpacing: "0.22em", color: "var(--ws-mint)" }}>NAMUHX / ROBOT</span>
             <h2 style={{ margin: "18px 0 0", fontSize: "clamp(28px,3.6vw,46px)", lineHeight: 1.14, fontWeight: 700, letterSpacing: "-0.025em", color: "#fff" }}>
               ‘가전’이 아니라 ‘로봇’ 회사로<br />각인시키는 메뉴
             </h2>
