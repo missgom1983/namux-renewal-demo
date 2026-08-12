@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>처음 만나는 웰니스 로봇 — NAMUH X</title>
+<link rel="stylesheet" href="../_ds/namuh-x-design-system-7766e90e-e112-40a0-bb7f-0cb3e4bb5396/tokens/fonts.css" />
+<link rel="stylesheet" href="../_ds/namuh-x-design-system-7766e90e-e112-40a0-bb7f-0cb3e4bb5396/tokens/colors.css" />
+<link rel="stylesheet" href="../_ds/namuh-x-design-system-7766e90e-e112-40a0-bb7f-0cb3e4bb5396/tokens/typography.css" />
+<link rel="stylesheet" href="../_ds/namuh-x-design-system-7766e90e-e112-40a0-bb7f-0cb3e4bb5396/tokens/layout.css" />
+<style>
+  html, body { margin: 0; padding: 0; background: #08090B; color: #fff; font-family: var(--font-sans, "WellnessSans", Pretendard, sans-serif); -webkit-font-smoothing: antialiased; }
+  * { box-sizing: border-box; }
+  .wrap { max-width: 1180px; margin: 0 auto; padding: 0 clamp(20px, 4vw, 48px); }
+  .hero { position: relative; }
+  .hero img { display: block; width: 100%; height: auto; }
+  .eyebrow { font-size: 11.5px; font-weight: 700; letter-spacing: 0.22em; text-transform: uppercase; color: var(--ws-mint, #85E1D2); }
+  h2.sec { margin: 14px 0 10px; font-size: clamp(24px, 3vw, 34px); font-weight: 700; letter-spacing: -0.02em; }
+  p.lead { margin: 0; font-size: 15px; line-height: 1.62; color: rgba(255,255,255,.6); max-width: 560px; }
+  .cards { margin-top: 40px; display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px; }
+  .card { position: relative; border: none; padding: 0; text-align: left; border-radius: 20px; overflow: hidden; background: #101215; cursor: default; font-family: inherit; color: #fff; transition: transform .24s cubic-bezier(.2,.7,.3,1), box-shadow .24s; }
+  .card.clickable { cursor: pointer; }
+  .card.clickable:hover { transform: translateY(-3px); box-shadow: 0 0 0 1.5px rgba(133,225,210,.65), 0 18px 44px rgba(0,0,0,.5); }
+  .card img { display: block; width: 100%; aspect-ratio: 4/5; object-fit: cover; }
+  .card .cap { position: absolute; left: 0; right: 0; bottom: 0; padding: 44px 18px 16px; background: linear-gradient(to top, rgba(4,5,6,.88), transparent); }
+  .card .cap strong { display: block; font-size: 16px; font-weight: 700; letter-spacing: -0.01em; }
+  .card .cap span { display: block; margin-top: 4px; font-size: 12.5px; line-height: 1.5; color: rgba(255,255,255,.62); }
+  .card .zoom { position: absolute; top: 12px; right: 12px; width: 28px; height: 28px; border-radius: 50%; background: rgba(8,9,11,.6); border: 1px solid rgba(133,225,210,.5); display: flex; align-items: center; justify-content: center; }
+  .tmr { margin-top: 72px; display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.1fr); gap: clamp(28px, 5vw, 64px); align-items: center; border-top: 1px solid rgba(255,255,255,.08); padding-top: 64px; }
+  .tmr img { display: block; width: 100%; border-radius: 20px; }
+  .tmr-item { display: flex; gap: 12px; margin-top: 18px; }
+  .tmr-item .dot { flex-shrink: 0; margin-top: 7px; width: 7px; height: 7px; border-radius: 50%; border: 1.5px solid rgba(133,225,210,.75); }
+  .tmr-item strong { font-size: 16px; font-weight: 700; letter-spacing: -0.01em; }
+  .tmr-item p { margin: 3px 0 0; font-size: 13.5px; line-height: 1.55; color: rgba(255,255,255,.55); }
+  .modal { position: fixed; inset: 0; z-index: 100; background: rgba(4,5,6,.82); display: none; align-items: center; justify-content: center; padding: 4vw; }
+  .modal.on { display: flex; }
+  .modal img { max-width: min(1000px, 92vw); max-height: 86vh; border-radius: 16px; box-shadow: 0 30px 80px rgba(0,0,0,.6); }
+  .modal .x { position: absolute; top: 22px; right: 26px; width: 40px; height: 40px; border-radius: 50%; border: 1px solid rgba(255,255,255,.3); background: rgba(8,9,11,.6); color: #fff; font-size: 17px; cursor: pointer; }
+  @media (max-width: 760px) { .tmr { grid-template-columns: 1fr; } }
+</style>
+</head>
+<body>
+<section class="hero"><img src="assets/robotB/hero-full.jpg" alt="켜는 순간이 아니라, 다가오는 순간 — 웰니스 로봇" /></section>
+
+<section class="wrap" style="padding-top:88px; padding-bottom:24px;">
+  <span class="eyebrow">Today / 현재가치</span>
+  <h2 class="sec">지금, 되는 것들</h2>
+  <p class="lead">스스로 다가와 나를 알아보고, 하루를 맞춰 케어합니다. 웰니스 로봇이 오늘 해내는 다섯 가지.</p>
+  <div class="cards">
+    <div class="card"><img src="assets/robotB/card-talk.jpg" alt="" /><div class="cap"><strong>대화가 통합니다</strong><span>음성만으로 알아듣고, 상황에 맞게 대화하며 필요한 일까지 해냅니다.</span></div></div>
+    <div class="card"><img src="assets/robotB/card-move.jpg" alt="" /><div class="cap"><strong>스스로 움직입니다</strong><span>집 안 곳곳을 익혀, 부딪힘 없이 원하는 곳으로 갑니다.</span></div></div>
+    <button class="card clickable" data-modal="assets/robotB/modal-air.jpg"><img src="assets/robotB/card-air.jpg" alt="" /><span class="zoom"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#85E1D2" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"></circle><path d="m21 21-4.3-4.3M8 11h6M11 8v6"></path></svg></span><div class="cap"><strong>공기까지 챙깁니다</strong><span>보고 듣는 것은 물론, 공기질과 온습도까지 살핍니다.</span></div></button>
+    <div class="card"><img src="assets/robotB/card-know.jpg" alt="" /><div class="cap"><strong>나를 알아갑니다</strong><span>마주하기만 해도 컨디션을 읽고, 꼭 맞는 케어를 건넵니다.</span></div></div>
+    <button class="card clickable" data-modal="assets/robotB/modal-safe.jpg"><img src="assets/robotB/card-safe.jpg" alt="" /><span class="zoom"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#85E1D2" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"></circle><path d="m21 21-4.3-4.3M8 11h6M11 8v6"></path></svg></span><div class="cap"><strong>안전하게 지킵니다</strong><span>데이터는 기기 안에서 암호화 처리, 국제 보안 인증으로 보호합니다.</span></div></button>
+  </div>
+</section>
+
+<section class="wrap" style="padding-bottom:110px;">
+  <div class="tmr">
+    <div>
+      <span class="eyebrow" style="color:rgba(133,225,210,.8)">Tomorrow / 미래가치</span>
+      <h2 class="sec">앞으로, 될 것들</h2>
+      <div class="tmr-item"><span class="dot"></span><div><strong>먼저 말을 건넵니다</strong><p>묻기 전에 알아차리고, 필요한 순간 먼저 챙깁니다.</p></div></div>
+      <div class="tmr-item"><span class="dot"></span><div><strong>손길까지 더합니다</strong><p>물건을 집고 건네며 돕는 차세대 모델(그립퍼)을 준비합니다.</p></div></div>
+    </div>
+    <img src="assets/robotB/evo-robot.jpg" alt="진화하는 웰니스 로봇" />
+  </div>
+</section>
+
+<div class="modal" id="modal"><button class="x" aria-label="닫기">✕</button><img id="modalImg" src="" alt="" /></div>
+<script>
+  var modal = document.getElementById('modal'), mImg = document.getElementById('modalImg');
+  document.querySelectorAll('.card.clickable').forEach(function (b) {
+    b.addEventListener('click', function () { mImg.src = b.getAttribute('data-modal'); modal.classList.add('on'); });
+  });
+  modal.addEventListener('click', function () { modal.classList.remove('on'); });
+</script>
+</body>
+</html>

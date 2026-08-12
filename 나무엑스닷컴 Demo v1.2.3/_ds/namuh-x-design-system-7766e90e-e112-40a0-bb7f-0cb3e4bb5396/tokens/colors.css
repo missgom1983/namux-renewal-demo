@@ -1,0 +1,114 @@
+/* ============================================================
+   NAMUH X — Color System
+   Wellness Mint (Pantone 332) + Wellness Blue, on Black/White.
+   Brand source: 브랜드 가이드 "컬러 시스템".
+   ============================================================ */
+:root {
+  /* ---- Brand core (from brand guide swatches) ---- */
+  --ws-mint:        #85E1D2;   /* Wellness Mint · Pantone 332 · PRIMARY */
+  --ws-blue:        #022452;   /* Wellness Blue · deep navy · SUPPORTING */
+  --ws-black:       #0A0B0D;   /* Brand Black · dark surfaces */
+  --ws-white:       #FFFFFF;
+
+  /* ---- Mint ramp (derived, harmonic) ---- */
+  --mint-50:   #ECFAF6;
+  --mint-100:  #D4F4ED;
+  --mint-200:  #B4ECE0;
+  --mint-300:  #85E1D2;   /* = --ws-mint */
+  --mint-400:  #5FCFBC;
+  --mint-500:  #3DB6A2;   /* mint as text/icon on white (AA on white for large) */
+  --mint-600:  #2A9384;
+  --mint-700:  #1F7064;
+
+  /* ---- Blue ramp (derived from Wellness Blue) ---- */
+  --blue-50:   #EAF0F8;
+  --blue-100:  #C9D8EC;
+  --blue-300:  #5C76A4;
+  --blue-500:  #143A73;
+  --blue-700:  #062A5C;
+  --blue-900:  #022452;   /* = --ws-blue */
+  --blue-950:  #01163A;
+
+  /* ---- Neutral ramp (cool gray, matches store UI) ---- */
+  --gray-0:    #FFFFFF;
+  --gray-50:   #F5F6F6;
+  --gray-100:  #ECEEEE;
+  --gray-200:  #E0E2E3;
+  --gray-300:  #CDD0D1;
+  --gray-400:  #A8ADAF;
+  --gray-500:  #7E8385;
+  --gray-600:  #5A5F61;
+  --gray-700:  #3D4143;
+  --gray-800:  #25282B;
+  --gray-900:  #16181A;
+  --gray-950:  #0A0B0D;
+
+  /* ---- Dark-theme surfaces (marketing site) ---- */
+  --dark-bg:        #08090B;
+  --dark-surface:   #121419;
+  --dark-surface-2: #1B1E25;
+  --dark-elevated:  #23272F;
+  --dark-hairline:  rgba(255,255,255,.10);
+  --dark-hairline-2:rgba(255,255,255,.16);
+
+  /* ---- Status ---- */
+  --success: #2A9384;
+  --warning: #E0A23B;
+  --error:   #D14343;
+  --info:    #143A73;
+
+  /* ============================================================
+     SEMANTIC ALIASES — prefer these in components
+     ============================================================ */
+
+  /* Brand actions */
+  --color-primary:        var(--ws-mint);
+  --color-primary-hover:  var(--mint-400);
+  --color-primary-press:  var(--mint-500);
+  --color-on-primary:     var(--ws-black);     /* dark text reads on mint */
+  --color-accent:         var(--ws-blue);
+  --color-on-accent:      var(--ws-white);
+
+  /* Light theme (store / commerce) */
+  --surface-page:    var(--gray-50);
+  --surface-card:    var(--ws-white);
+  --surface-sunken:  var(--gray-100);
+  --surface-inverse: var(--ws-black);
+  --surface-mint:    var(--mint-100);   /* soft mint promo blocks */
+
+  --text-strong:   var(--gray-950);
+  --text-body:     var(--gray-800);
+  --text-muted:    var(--gray-500);
+  --text-faint:    var(--gray-400);
+  --text-on-dark:  var(--ws-white);
+  --text-on-dark-muted: rgba(255,255,255,.62);
+  --text-link:     var(--mint-600);
+
+  --border-subtle:  var(--gray-200);
+  --border-default: var(--gray-300);
+  --border-strong:  var(--gray-900);   /* selected option outline */
+  --border-focus:   var(--mint-400);
+
+  /* Dark theme (marketing) — apply via .ws-dark scope */
+  --d-surface-page:  var(--dark-bg);
+  --d-surface-card:  var(--dark-surface);
+  --d-text-strong:   var(--ws-white);
+  --d-text-muted:    rgba(255,255,255,.62);
+  --d-border:        var(--dark-hairline);
+}
+
+/* Dark surface scope: marketing site, footers, hero overlays */
+.ws-dark {
+  --surface-page:   var(--dark-bg);
+  --surface-card:   var(--dark-surface);
+  --surface-sunken: var(--dark-surface-2);
+  --text-strong:    var(--ws-white);
+  --text-body:      rgba(255,255,255,.82);
+  --text-muted:     rgba(255,255,255,.55);
+  --text-faint:     rgba(255,255,255,.38);
+  --border-subtle:  var(--dark-hairline);
+  --border-default: var(--dark-hairline-2);
+  --border-strong:  rgba(255,255,255,.7);
+  color: var(--text-body);
+  background: var(--surface-page);
+}
