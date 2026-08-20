@@ -121,11 +121,11 @@
                           </div>
                           <div style={{ display: "flex", flexDirection: "column", gap: 2 }}>
                             {m.items.map((it) => {
-                              const clickable = !!it.screen;
-                              const on = clickable && it.screen === selected;
+                              const clickable = !!it.screen || !!it.url;
+                              const on = !!it.screen && it.screen === selected;
                               const hov = hovItem === it.label;
                               return (
-                                <button key={it.label} onClick={() => { if (clickable) { onSelect(it.screen); setOpen(null); } }}
+                                <button key={it.label} onClick={() => { if (it.url) { window.open(it.url, "_blank", "noopener"); setOpen(null); } else if (it.screen) { onSelect(it.screen); setOpen(null); } }}
                                 onMouseEnter={() => setHovItem(it.label)}
                                 onMouseLeave={() => setHovItem(null)}
                                 style={{ display: "flex", alignItems: "baseline", gap: 18, background: hov ? "rgba(255,255,255,.06)" : "none", border: "none", borderRadius: 8, padding: "6px 10px", margin: "0 -10px", textAlign: "left", cursor: clickable ? "pointer" : "default", fontFamily: "inherit",
@@ -145,11 +145,11 @@
                   <div style={{ position: "absolute", top: 62, left: 0, minWidth: 260, background: "rgba(52,52,52,.97)", backdropFilter: "blur(18px)", WebkitBackdropFilter: "blur(18px)", border: "1px solid rgba(255,255,255,.07)", borderTop: "1px solid rgba(255,255,255,.05)", borderRadius: "0 0 14px 14px", boxShadow: "0 34px 70px rgba(0,0,0,.45)", padding: "18px 22px 20px", boxSizing: "border-box" }}>
                       <div style={{ display: "flex", flexDirection: "column", gap: 2 }}>
                         {m.items.map((it) => {
-                          const clickable = !!it.screen;
-                          const on = clickable && it.screen === selected;
+                          const clickable = !!it.screen || !!it.url;
+                          const on = !!it.screen && it.screen === selected;
                           return (
                             <div key={it.label}>
-                              <button onClick={() => { if (clickable) { onSelect(it.screen); setOpen(null); } }}
+                              <button onClick={() => { if (it.url) { window.open(it.url, "_blank", "noopener"); setOpen(null); } else if (it.screen) { onSelect(it.screen); setOpen(null); } }}
                               onMouseEnter={(e) => { setHovItem(it.label); if (clickable) e.currentTarget.style.color = "var(--ws-mint)"; }}
                               onMouseLeave={(e) => { setHovItem(null); if (clickable) e.currentTarget.style.color = on ? "var(--ws-mint)" : "#fff"; }}
                               style={{ display: "flex", alignItems: "baseline", gap: 12, background: "none", border: "none", padding: "5px 0", textAlign: "left", cursor: clickable ? "pointer" : "default", fontFamily: "inherit", whiteSpace: "nowrap",
@@ -1014,10 +1014,12 @@
                 {pages.map((p, i) => <button key={p.label} onClick={() => setPi(i)} style={{ padding: "5px 14px", borderRadius: 999, border: "none", cursor: "pointer", fontFamily: "inherit", fontSize: 12.5, fontWeight: 700, background: pi === i ? "var(--surface-card)" : "transparent", color: pi === i ? "var(--text-strong)" : "var(--text-muted)", boxShadow: pi === i ? "var(--shadow-card)" : "none" }}>{p.label}</button>)}
               </div>}
             </div>
-            <button onClick={() => setFull(true)} style={{ display: "inline-flex", alignItems: "center", gap: 7, cursor: "pointer", padding: "8px 14px", borderRadius: "var(--radius-pill)", border: "1px solid var(--border-default)", background: "var(--surface-card)", color: "var(--text-strong)", fontSize: 13, fontWeight: 700 }}>
+            <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+            <button onClick={() => setFull(true)} style={{ display: "inline-flex", alignItems: "center", gap: 7, cursor: "pointer", padding: "8px 14px", borderRadius: "var(--radius-pill)", border: "1px solid var(--border-default)", background: "var(--surface-card)", color: "var(--text-strong)", fontSize: 13, fontWeight: 700, fontFamily: "inherit" }}>
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M8 3H5a2 2 0 0 0-2 2v3M16 3h3a2 2 0 0 1 2 2v3M21 16v3a2 2 0 0 1-2 2h-3M3 16v3a2 2 0 0 0 2 2h3" /></svg>
               전체화면
             </button>
+            </div>
           </div>
           <div key={pages ? pi : "one"} style={{ maxHeight: "calc(100vh - 230px)", minHeight: 360, overflowY: "auto", background: "var(--gray-50)" }}>
             <img src={cur.src} alt={screen.title} draggable={false} style={{ display: "block", width: "100%", height: "auto" }} />
@@ -1031,6 +1033,8 @@
   /* ---- 라이브 화면 (실제 페이지를 iframe으로 임베드 / TypeB) ---- */
   function LiveStage({ screen }) {
     const [full, setFull] = useState(false);
+    const [rk, setRk] = useState(0);
+    const [started, setStarted] = useState(!screen.lazy);
     React.useEffect(() => {
       if (!full) return;
       const onKey = (e) => { if (e.key === "Escape") setFull(false); };
@@ -1050,12 +1054,34 @@
               <span style={{ fontSize: 11, fontWeight: 700, color: "var(--ws-black)", background: "var(--ws-mint)", padding: "3px 10px", borderRadius: 999 }}>리뉴얼</span>
               <span style={{ fontSize: 12.5, color: "var(--text-muted)" }}>실제 동작 화면</span>
             </div>
-            <button onClick={() => setFull(true)} style={{ display: "inline-flex", alignItems: "center", gap: 7, cursor: "pointer", padding: "8px 14px", borderRadius: "var(--radius-pill)", border: "1px solid var(--border-default)", background: "var(--surface-card)", color: "var(--text-strong)", fontSize: 13, fontWeight: 700 }}>
+            <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+            <button onClick={() => { if (started) setRk((v) => v + 1);else setStarted(true); }} style={{ display: "inline-flex", alignItems: "center", gap: 7, cursor: "pointer", padding: "8px 14px", borderRadius: "var(--radius-pill)", border: started ? "1px solid var(--border-default)" : "none", background: started ? "var(--surface-card)" : "var(--ws-mint)", color: started ? "var(--text-strong)" : "var(--ws-black)", fontSize: 13, fontWeight: 700, fontFamily: "inherit" }}>
+              {started ?
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 12a9 9 0 1 1-2.64-6.36M21 3v6h-6" /></svg> :
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" stroke="none"><path d="M8 5.5v13l11-6.5z" /></svg>}
+              {started ? "새로고침" : "실행"}
+            </button>
+            <button onClick={() => setFull(true)} style={{ display: "inline-flex", alignItems: "center", gap: 7, cursor: "pointer", padding: "8px 14px", borderRadius: "var(--radius-pill)", border: "1px solid var(--border-default)", background: "var(--surface-card)", color: "var(--text-strong)", fontSize: 13, fontWeight: 700, fontFamily: "inherit" }}>
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M8 3H5a2 2 0 0 0-2 2v3M16 3h3a2 2 0 0 1 2 2v3M21 16v3a2 2 0 0 1-2 2h-3M3 16v3a2 2 0 0 0 2 2h3" /></svg>
               전체화면
             </button>
+            </div>
           </div>
-          <iframe title={screen.title} src={screen.iframe} style={{ display: "block", width: "100%", height: "calc(100vh - 210px)", minHeight: 420, border: "none", background: "#ededed" }}></iframe>
+          {started ?
+          <div style={{ position: "relative", overflow: "hidden", height: "calc(100vh - 210px)", minHeight: 420, background: "#000" }}>
+            <iframe key={rk} title={screen.title} src={screen.iframe} style={{ display: "block", width: "100%", height: "calc(100% + " + (screen.hideTop || 0) + "px)", marginTop: -(screen.hideTop || 0), border: "none", background: "#ededed" }}></iframe>
+          </div> :
+          <div style={{ height: "calc(100vh - 210px)", minHeight: 420, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: 18, background: "#2A2C30" }}>
+            <p style={{ margin: 0, fontSize: 14, color: "rgba(255,255,255,.66)", textAlign: "center", lineHeight: 1.6 }}>시연 씬은 처음부터 재생돼야 하므로 자동 실행하지 않습니다.<br />‘실행’ 또는 ‘전체화면’을 누르면 로딩됩니다.</p>
+            <div style={{ display: "flex", gap: 10 }}>
+              <button onClick={() => setStarted(true)} style={{ display: "inline-flex", alignItems: "center", gap: 8, cursor: "pointer", padding: "12px 22px", borderRadius: "var(--radius-pill)", border: "none", background: "var(--ws-mint)", color: "var(--ws-black)", fontSize: 14, fontWeight: 800, fontFamily: "inherit" }}>
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" stroke="none"><path d="M8 5.5v13l11-6.5z" /></svg>실행
+              </button>
+              <button onClick={() => setFull(true)} style={{ display: "inline-flex", alignItems: "center", gap: 8, cursor: "pointer", padding: "12px 22px", borderRadius: "var(--radius-pill)", border: "1px solid rgba(255,255,255,.24)", background: "rgba(255,255,255,.08)", color: "#fff", fontSize: 14, fontWeight: 700, fontFamily: "inherit" }}>
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M8 3H5a2 2 0 0 0-2 2v3M16 3h3a2 2 0 0 1 2 2v3M21 16v3a2 2 0 0 1-2 2h-3M3 16v3a2 2 0 0 0 2 2h3" /></svg>전체화면
+              </button>
+            </div>
+          </div>}
         </div>
         {full && (
           <div style={{ position: "fixed", inset: 0, zIndex: 900, background: "#000", display: "flex", flexDirection: "column" }}>
@@ -1068,7 +1094,9 @@
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><path d="M6 6l12 12M18 6L6 18" /></svg>
               </button>
             </div>
-            <iframe title={screen.title} src={screen.iframe + "?full=1"} style={{ flex: 1, width: "100%", border: "none", background: "#ededed" }}></iframe>
+            <div style={{ flex: 1, position: "relative", overflow: "hidden", background: "#000" }}>
+              <iframe key={rk} title={screen.title} src={screen.iframeFull || screen.iframe + "?full=1"} style={{ display: "block", width: "100%", height: "calc(100% + " + (screen.hideTop || 0) + "px)", marginTop: -(screen.hideTop || 0), border: "none", background: "#ededed" }}></iframe>
+            </div>
           </div>
         )}
       </React.Fragment>);

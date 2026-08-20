@@ -40,7 +40,7 @@
                 { x: 39.7, y: 4.4, h: 56, text: "구독 신청하는 구매 페이지" },
                 { x: 46.2, y: 4.4, h: 98, text: "구매 혜택을 보는 메뉴" },
               ] },
-      tobe: { src: "스토어_홈_FHD.png".normalize("NFC"), ratio: 5471 / 1920, tag: "TO-BE", label: "리뉴얼", caption: "제품/구독/소모품/이벤트/혜택/스토리까지 완결형 허브" },
+      tobe: { src: "store-home-fhd.png".normalize("NFC"), ratio: 5471 / 1920, tag: "TO-BE", label: "리뉴얼", caption: "제품/구독/소모품/이벤트/혜택/스토리까지 완결형 허브" },
       issues: [
         { label: "톤앤매너 — 다크톤 적용", desc: "구매 화면임에도 정보 가독성 저하", box: { x: 2, y: 4, w: 96, h: 8 } },
         { label: "카테고리 구조 — 상품 단순 나열", desc: "제품/구독/소모품 구분 없이 평면 진열", zoom: 1, box: { x: 18, y: 23, w: 66, h: 49 } },
@@ -72,7 +72,7 @@
       viewH: 892,
       desc: "어두운 단일 컬럼 구매 폼에서, 밝은 2단 구성으로. 좌측은 제품 체험, 우측은 구독 설계와 가격 설득을 전면화합니다.",
       asis: { src: "assets/asis-pdp.jpg", ratio: 13137 / 2940, tag: "AS-IS", label: "고도몰", caption: "다크 단일 컬럼 / 구매 옵션과 텍스트 리뷰 위주" },
-      tobe: { src: "제품 리뷰_PC_FHD.png".normalize("NFC"), ratio: 3969 / 1920, tag: "TO-BE", label: "리뉴얼", caption: "좌측 제품 체험 / 우측 구독 설계 + AI 리뷰 요약",
+      tobe: { src: "pdp-review-fhd.png".normalize("NFC"), ratio: 3969 / 1920, tag: "TO-BE", label: "리뉴얼", caption: "좌측 제품 체험 / 우측 구독 설계 + AI 리뷰 요약",
               hotspots: [{ x: 11, y: 32.4, w: 6.8, h: 1.9, label: "제품 상세 보기", img: "assets/tobe-pdp-body.png", title: "제품 상세" }],
               splitView: { left: "제품 체험", right: "구독 설계 / 구매", gnb: "assets/tobe-pdp-gnb.png", body: "assets/tobe-pdp-body-main.png", footer: "assets/tobe-pdp-footer.png", aiScreen: "ai" } },
       issues: [
@@ -113,6 +113,13 @@
       kicker: "로봇 / 처음 만나는 웰니스 로봇",
       title: "처음 만나는 웰니스 로봇",
       iframe: "robotB.html",
+    },
+    a1live: {
+      id: "a1live", type: "live",
+      kicker: "웰니스 로봇 / 처음 만나는 웰니스 로봇",
+      title: "처음 만나는 웰니스 로봇",
+      iframe: "https://woong.mock.pe.kr/a1/",
+      iframeFull: "https://woong.mock.pe.kr/a1/", lazy: true, hideTop: 64,
     },
     robot: {
       id: "robot", type: "story",
@@ -219,7 +226,7 @@
       kicker: "브랜드 / 브랜드 스토리",
       title: "브랜드 스토리",
       desc: "정적 이미지와 설명문 중심의 고도몰 브랜드 소개에서, 브랜드 필름과 타이포 서사로 몰입을 만드는 시네마틱 구성으로 바뀝니다.",
-      asis: { src: "(고도몰)브랜드스토리_260618.png".normalize("NFC"), ratio: 10337 / 1920, tag: "AS-IS", label: "고도몰", caption: "정적 이미지 히어로 + 긴 설명문 나열" },
+      asis: { src: "asis-brandstory.png".normalize("NFC"), ratio: 10337 / 1920, tag: "AS-IS", label: "고도몰", caption: "정적 이미지 히어로 + 긴 설명문 나열" },
       tobe: { src: "Frame 2116930399.jpg", ratio: 9670 / 1920, tag: "TO-BE", label: "리뉴얼", caption: "브랜드 필름 + HUMAN 타이포 서사 + 파트너 신뢰 요소" },
       issues: [
         { label: "톤앤매너 — 다크톤 적용", desc: "다크 배경 위 저대비 텍스트로 핵심 메시지가 묻힘", sweep: true, sweepSpeed: 0.32, sweepSpeedEnd: 1.1, sweepStops: [{ y: 35, hold: 0 }], box: { x: 2, y: 95, w: 96, h: 4 } },
@@ -233,8 +240,8 @@
       kicker: "브랜드 / 브랜드 자산",
       title: "브랜드 자산",
       desc: "라이트 UI 위 아카이브식 나열에서, 브랜드 필름/다크 무드/사이드 내비게이션을 갖춘 몰입형 자산 페이지로 바뀝니다.",
-      asis: { src: "(고도몰)브랜드자산_260618.png".normalize("NFC"), ratio: 9757 / 1920, tag: "AS-IS", label: "고도몰", caption: "라이트 UI 위 자산 아카이브식 나열" },
-      tobe: { src: "03.브랜드_02.브랜드자산.jpg".normalize("NFC"), ratio: 8594 / 1920, tag: "TO-BE", label: "리뉴얼", caption: "브랜드 필름 + 다크 무드 + 사이드 내비게이션" },
+      asis: { src: "asis-brandasset.png".normalize("NFC"), ratio: 9757 / 1920, tag: "AS-IS", label: "고도몰", caption: "라이트 UI 위 자산 아카이브식 나열" },
+      tobe: { src: "tobe-brandasset.jpg".normalize("NFC"), ratio: 8594 / 1920, tag: "TO-BE", label: "리뉴얼", caption: "브랜드 필름 + 다크 무드 + 사이드 내비게이션" },
       issues: [
         { label: "톤앤매너 — 다크모드와 어려운 진입 경로", desc: "배경과 자산의 무드가 달라 브랜드 몰입 저하", sweep: true, sweepSpeed: 0.3, box: { x: 2, y: 95, w: 96, h: 4 } },
       ],
@@ -248,7 +255,7 @@
       title: "업데이트 소식",
       desc: "이벤트 게시판 속 장문 이미지 한 장이었던 업데이트 소식을, 월별 목록/영상 하이라이트/이메일 구독을 갖춘 전용 메뉴로 전환합니다.\nOTA 성장 스토리가 곱 ‘구독 확장성’의 근거가 됩니다.",
       asis: { src: "6306301072e8d8922970611f63fc1189.png", ratio: 22317 / 1200, tag: "AS-IS", label: "고도몰", caption: "프로모션과 업데이트 공지가 장문 다크 이미지 한 장에 혼재" },
-      tobe: { src: "04.고객지원_03.업데이트소식_list_01.png".normalize("NFC"), ratio: 2408 / 1920, tag: "TO-BE", label: "리뉴얼", caption: "월별 목록 + 영상 하이라이트 + 이메일 구독으로 재방문 유도" },
+      tobe: { src: "tobe-growx.png".normalize("NFC"), ratio: 2408 / 1920, tag: "TO-BE", label: "리뉴얼", caption: "월별 목록 + 영상 하이라이트 + 이메일 구독으로 재방문 유도" },
       issues: [
 
         { label: "톤앤매너 — 장문 다크 이미지 한 장", desc: "한 화면이 끝없이 이어져 길이만 확인될 뿐 탐색 수단이 없음", sweep: true, sweepSpeed: 1.6, sweepThen: 1, box: { x: 2, y: 96, w: 96, h: 3 } },
@@ -336,8 +343,8 @@
       kicker: "함께 만드는 로봇 시대",
       title: "함께 만드는 나무엑스",
       pages: [
-        { label: "목록", src: "05.함께만드는로봇시대_03.함께만드는나무엑스_list.png".normalize("NFC") },
-        { label: "상세보기", src: "05.함께만드는로봇시대_03.함께만드는나무엑스_view.png".normalize("NFC") },
+        { label: "목록", src: "together-list.png".normalize("NFC") },
+        { label: "상세보기", src: "together-view.png".normalize("NFC") },
       ],
     },
     diary: {
@@ -345,8 +352,8 @@
       kicker: "함께 만드는 로봇 시대",
       title: "나무엑스 이야기",
       pages: [
-        { label: "목록", src: "05.함께만드는로봇시대_04.나무엑스이야기_list.png".normalize("NFC") },
-        { label: "상세보기", src: "05.함께만드는로봇시대_04.나무엑스이야기_view.png".normalize("NFC") },
+        { label: "목록", src: "diary-list.png".normalize("NFC") },
+        { label: "상세보기", src: "diary-view.png".normalize("NFC") },
       ],
       desc: "GEO 및 SEO 대응 페이지로 제품 가치를 일상 스토리로 풀어내는 콘텐츠 허브입니다.",
       hero: "로봇과 사는 시대, 나무엑스와 함께하는 일상",
@@ -424,7 +431,7 @@
   // GNB 2depth — 스크린샷 IA 기준. desc=설명(기울임), tag=가칭, pre=오픈이후(빨강), xmark=X마크, children=하위
   const GNB = [
     { name: "웰니스 로봇", to: "robot", isNew: true, strategyTag: "가치 인지 | Awareness", strategy: "웰니스 로봇이 어떤 존재인지 이해시키는 공간", items: [
-      { label: "처음 만나는 웰니스 로봇", thumb: "gnb_image-d7b8e515.jpg", descOnHover: true, desc: "로봇이 처음인 고객을 위한 오버뷰 — 나무엑스가 집안에서 무엇을 하는지, 왜 웰니스 로봇인지를 한 흐름으로 안내" },
+      { label: "처음 만나는 웰니스 로봇", thumb: "gnb_image-d7b8e515.jpg", screen: "a1live", descOnHover: true, desc: "로봇이 처음인 고객을 위한 오버뷰 — 나무엑스가 집안에서 무엇을 하는지, 왜 웰니스 로봇인지를 한 흐름으로 안내" },
       { label: "빈틈없는 공간 케어", thumb: "gnb-space-care.jpg", descOnHover: true, desc: "스스로 움직이며 집 전체를 살피는 공간 케어 — 에어솔루션, 세이프케어, 라이브뷰" },
       { label: "나를 위한 맞춤 케어", thumb: "gnb-personal-care.jpg", descOnHover: true, desc: "가족 한 사람 한 사람을 기억하는 개인 케어 — 마이헬스케어, 바이탈 체크, AI 컴패니언" },
       { label: "매일 진화하는 AI", thumb: "gnb-evolving-ai.jpg", descOnHover: true, desc: "사용할수록 똑똑해지는 로봇 — OTA 업데이트, 데이터 기반 초개인화, 파트너 생태계 확장" },
