@@ -15,9 +15,9 @@
       kicker: "메인 / 홈",
       title: "메인 HOME",
       desc: "보안 프로모션 배너 중심의 고도몰에서, 브랜드 필름과 기능/커뮤니티 서사를 전면에 둔 구성으로 바뀝니다.",
-      asis: { src: "assets/asis-home.jpg",  ratio: 9489 / 2940, tag: "AS-IS", label: "고도몰", caption: "S1 보안 배너가 메인을 점유 / 제품 가치 서사 부재" },
-      tobe: { src: "assets/tobe-home.jpeg", ratio: 8069 / 1920, tag: "TO-BE", label: "리뉴얼", caption: "풀스크린 브랜드 필름 + 기능/커뮤니티 서사로 재편",
-              heroVideo: "assets/brand-film.mp4", heroBanner: "assets/rosasi-banner.jpg" },
+      asis: { src: "assets/asis-home.jpg", ratio: 9489 / 2940, tag: "AS-IS", label: "고도몰", caption: "S1 보안 배너가 메인을 점유 / 제품 가치 서사 부재" },
+      tobe: { src: "메인페이지_PC_B.png".normalize("NFC"), ratio: 7755 / 1920, tag: "TO-BE", label: "리뉴얼", caption: "풀스크린 브랜드 필름 + 기능/커뮤니티 서사로 재편",
+              heroBanner: "메인페이지_PC_B.png".normalize("NFC") },
       issues: [
         { label: "톤앤매너 — 단일 다크톤 일괄 적용", desc: "전 페이지 동일 톤 → 콘텐츠 속성 및 가독성 고려 부재", sweep: true, box: { x: 3, y: 94, w: 94, h: 5 } },
         { label: "메인 KV — 정적 배너 중심", desc: "이미지 1컷 → 제품 동작 및 체감 전달 한계", box: { x: 3, y: 1, w: 94, h: 17 } },
@@ -93,7 +93,7 @@
       title: "AI 리뷰 / 영상 리뷰",
       viewH: 892,
       desc: "리뉴얼 PDP 위에 얹는 신규 레이어입니다. 리뷰를 ‘읽는 것’에서 ‘AI 요약/영상으로 보는 것’으로 바꿔 구매 전환을 돕습니다.",
-      asis: { src: "assets/tobe-pdp.png",    ratio: 4229 / 1920, tag: "기본", label: "리뉴얼 PDP", caption: "텍스트/별점 중심의 리뷰 구성" },
+      asis: { src: "assets/tobe-pdp.png", ratio: 4229 / 1920, tag: "기본", label: "리뉴얼 PDP", caption: "텍스트/별점 중심의 리뷰 구성" },
       tobe: { src: "assets/tobe-pdp-ai.png", ratio: 8334 / 2560, tag: "신규", label: "AI 리뷰/영상", caption: "AI 요약 + 영상 리뷰 + 키워드 칩으로 리뷰 탐색 재설계" },
       issues: [
         { label: "리뷰 요약 — 일일이 읽어야 함", desc: "수천 건 리뷰의 핵심을 요약해 주는 장치가 없음", box: { x: 2, y: 55, w: 46, h: 18 } },
@@ -114,12 +114,38 @@
       title: "처음 만나는 웰니스 로봇",
       iframe: "robotB.html",
     },
+    brief1p: {
+      id: "brief1p", type: "brief",
+      kicker: "보고 자료 / 마케팅",
+      title: "나무엑스닷컴 리뉴얼 보고 (1P)",
+    },
     a1live: {
       id: "a1live", type: "live",
       kicker: "웰니스 로봇 / 처음 만나는 웰니스 로봇",
       title: "처음 만나는 웰니스 로봇",
-      iframe: "https://woong.mock.pe.kr/a1/",
-      iframeFull: "https://woong.mock.pe.kr/a1/", lazy: true, hideTop: 64,
+      iframe: "https://woong.mock.pe.kr/a1/?scene=1",
+      iframeFull: "https://woong.mock.pe.kr/a1/?scene=1", lazy: true, hideTop: 64,
+    },
+    a1space: {
+      id: "a1space", type: "live",
+      kicker: "웰니스 로봇 / 빈틈없는 공간 케어",
+      title: "빈틈없는 공간 케어",
+      iframe: "https://woong.mock.pe.kr/a1/?scene=2",
+      iframeFull: "https://woong.mock.pe.kr/a1/?scene=2", hideTop: 64,
+    },
+    a1personal: {
+      id: "a1personal", type: "live",
+      kicker: "웰니스 로봇 / 나를 위한 맞춤 케어",
+      title: "나를 위한 맞춤 케어",
+      iframe: "https://woong.mock.pe.kr/a1/?scene=3",
+      iframeFull: "https://woong.mock.pe.kr/a1/?scene=3", hideTop: 64,
+    },
+    a1ai: {
+      id: "a1ai", type: "live",
+      kicker: "웰니스 로봇 / 매일 진화하는 AI",
+      title: "매일 진화하는 AI",
+      iframe: "https://woong.mock.pe.kr/a1/?scene=4",
+      iframeFull: "https://woong.mock.pe.kr/a1/?scene=4", hideTop: 64,
     },
     robot: {
       id: "robot", type: "story",
@@ -273,7 +299,7 @@
       kicker: "브랜드 / 브랜드 소식",
       title: "나무엑스 뉴스",
       pages: NEWS_PAGES, startPage: 0,
-      desc: "브랜드 소식을 PR 뉴스 / Instagram / YouTube 탭으로 묶고, 썸네일 카드 그리드와 검색·페이지네이션으로 탐색할 수 있게 재구성했습니다.",
+      desc: "브랜드 소식을 PR 뉴스 / Instagram / YouTube 탭으로 묶고, 썸네일 카드 그리드와 검색, 페이지네이션으로 탐색할 수 있게 재구성했습니다.",
     },
     instagram: {
       id: "instagram", type: "page",
@@ -287,21 +313,21 @@
       kicker: "브랜드 / 브랜드 소식",
       title: "유튜브",
       pages: NEWS_PAGES, startPage: 2,
-      desc: "공식 유튜브 영상을 썸네일 카드로 정렬해, 제품 가이드·업데이트·브랜드 필름을 브랜드 소식 안에서 바로 재생 탐색합니다.",
+      desc: "공식 유튜브 영상을 썸네일 카드로 정렬해, 제품 가이드, 업데이트, 브랜드 필름을 브랜드 소식 안에서 바로 재생 탐색합니다.",
     },
     support: {
       id: "support", type: "page",
       kicker: "고객지원 / 홈",
       title: "고객지원 홈",
       src: "support-home.jpg", ratio: 2850 / 1920,
-      desc: "보유 제품의 사용 가이드, 공지/FAQ, A/S·서비스 센터까지 구매 이후에 필요한 정보를 한 화면에 모은 고객지원 허브입니다.",
+      desc: "보유 제품의 사용 가이드, 공지/FAQ, A/S, 서비스 센터까지 구매 이후에 필요한 정보를 한 화면에 모은 고객지원 허브입니다.",
     },
     notice: {
       id: "notice", type: "page",
       kicker: "고객지원 / 공지사항",
       title: "공지사항",
       src: "support-notice.jpg", ratio: 2069 / 1920,
-      desc: "공지사항을 카드 그리드로 재구성하고, 검색과 페이지네이션·‘공지’ 태그로 중요 소식을 먼저 눈에 띄게 했습니다.",
+      desc: "공지사항을 카드 그리드로 재구성하고, 검색과 페이지네이션, ‘공지’ 태그로 중요 소식을 먼저 눈에 띄게 했습니다.",
     },
     faq: {
       id: "faq", type: "page",
@@ -315,14 +341,14 @@
       kicker: "고객지원 / 제품 지원 — 서비스 센터",
       title: "서비스 센터",
       src: "support-center.jpg", ratio: 2148 / 1920,
-      desc: "지역 → 센터 선택 → 지도/상세를 한 화면에서 처리하고, 네이버·카카오·구글 지도 연결과 표준 운영시간 안내를 상단에 고정했습니다.",
+      desc: "지역 → 센터 선택 → 지도/상세를 한 화면에서 처리하고, 네이버, 카카오, 구글 지도 연결과 표준 운영시간 안내를 상단에 고정했습니다.",
     },
     manual: {
       id: "manual", type: "page",
       kicker: "고객지원 / 제품 지원 — 제품 설명서",
       title: "제품 설명서",
       src: "support-manual.jpg", ratio: 1849 / 1920,
-      desc: "보유 제품별로 매뉴얼 다운로드와 사용설명서 보기를 한 행에 묶고, 모델명·검색을 붙여 내 제품 문서를 바로 찾도록 했습니다.",
+      desc: "보유 제품별로 매뉴얼 다운로드와 사용설명서 보기를 한 행에 묶고, 모델명, 검색을 붙여 내 제품 문서를 바로 찾도록 했습니다.",
     },
     usevideo: {
       id: "usevideo", type: "page",
@@ -336,7 +362,7 @@
       kicker: "스토어 / 카드 혜택",
       title: "카드 혜택",
       src: "card-benefit-fhd.png", ratio: 2951 / 1920,
-      desc: "GNB 곳곳에 흩어져 있던 카드 혜택 정보를 스토어 하위 한 페이지로 모았습니다. 제휴 카드와 이 달의 카드 혜택을 탭으로 나누고, 카드별 월 최대할인 / 연회비 / 전월 실적별 기본·행사 추가할인을 한 표에서 비교합니다.",
+      desc: "GNB 곳곳에 흩어져 있던 카드 혜택 정보를 스토어 하위 한 페이지로 모았습니다. 제휴 카드와 이 달의 카드 혜택을 탭으로 나누고, 카드별 월 최대할인 / 연회비 / 전월 실적별 기본, 행사 추가할인을 한 표에서 비교합니다.",
     },
     together: {
       id: "together", type: "page",
@@ -382,10 +408,11 @@
       ],
     },
     robotEra: {
-      id: "robotEra", type: "page", stageTag: "고도몰",
+      id: "robotEra", type: "page", stageTag: "리뉴얼",
       kicker: "함께 만드는 로봇 시대",
       title: "로봇과 사는 시대",
-      src: "assets/robot-era.png", ratio: 7176 / 3483,
+      src: "assets/robot-era-renewal.png", ratio: 1920 / 7058,
+      desc: "리뉴얼에 반영되는 페이지입니다. 고도몰 구성과 흡사해 비교 없이 리뉴얼 화면만 노출합니다. 브랜드 필름 → 릴레이 숏폼 → 셀럽/인플루언서 영상 리뷰 → 나무엑스 꾸미기 참여 유도까지, 로봇과 사는 일상을 영상 중심으로 이어 붙였습니다.",
     },
     imagine: {
       id: "imagine", type: "page", stageTag: "고도몰",
@@ -432,45 +459,46 @@
   const GNB = [
     { name: "웰니스 로봇", to: "robot", isNew: true, strategyTag: "가치 인지 | Awareness", strategy: "웰니스 로봇이 어떤 존재인지 이해시키는 공간", items: [
       { label: "처음 만나는 웰니스 로봇", thumb: "gnb_image-d7b8e515.jpg", screen: "a1live", descOnHover: true, desc: "로봇이 처음인 고객을 위한 오버뷰 — 나무엑스가 집안에서 무엇을 하는지, 왜 웰니스 로봇인지를 한 흐름으로 안내" },
-      { label: "빈틈없는 공간 케어", thumb: "gnb-space-care.jpg", descOnHover: true, desc: "스스로 움직이며 집 전체를 살피는 공간 케어 — 에어솔루션, 세이프케어, 라이브뷰" },
-      { label: "나를 위한 맞춤 케어", thumb: "gnb-personal-care.jpg", descOnHover: true, desc: "가족 한 사람 한 사람을 기억하는 개인 케어 — 마이헬스케어, 바이탈 체크, AI 컴패니언" },
-      { label: "매일 진화하는 AI", thumb: "gnb-evolving-ai.jpg", descOnHover: true, desc: "사용할수록 똑똑해지는 로봇 — OTA 업데이트, 데이터 기반 초개인화, 파트너 생태계 확장" },
+      { label: "빈틈없는 공간 케어", thumb: "gnb-space-care.jpg", screen: "a1space", descOnHover: true, desc: "스스로 움직이며 집 전체를 살피는 공간 케어 — 에어솔루션, 세이프케어, 라이브뷰" },
+      { label: "나를 위한 맞춤 케어", thumb: "gnb-personal-care.jpg", screen: "a1personal", descOnHover: true, desc: "가족 한 사람 한 사람을 기억하는 개인 케어 — 마이헬스케어, 바이탈 체크, AI 컴패니언" },
+      { label: "매일 진화하는 AI", thumb: "gnb-evolving-ai.jpg", screen: "a1ai", descOnHover: true, desc: "사용할수록 똑똑해지는 로봇 — OTA 업데이트, 데이터 기반 초개인화, 파트너 생태계 확장" },
     ]},
     { name: "스토어", to: "store", strategyTag: "구매 전환 | Conversion", strategy: "구매에 필요한 모든 것을 한곳에 모은 구매 전용 공간", items: [
-      { label: "제품", screen: "store", children: [
-        { label: "A1", screen: "pdp" },
-        { label: "에어센서" },
+      { label: "스토어 홈", screen: "store", thumb: "gnb_image-72515076.jpg", descOnHover: true, desc: "제품, 구독, 소모품을 한 흐름으로 모은 구매 허브" },
+      { label: "제품", pill: true, children: [
+        { label: "A1", screen: "pdp", thumb: "gnb_image-72515076.jpg" },
+        { label: "에어센서", thumb: "gnb_image-72515076.jpg" },
       ]},
-      { label: "구독 서비스", children: [
-        { label: "세이프케어" },
-        { label: "라이브뷰" },
+      { label: "구독서비스", pill: true, children: [
+        { label: "라이브뷰", thumb: "gnb_image-72515076.jpg" },
+        { label: "세이프케어", thumb: "gnb_image-72515076.jpg" },
       ]},
-      { label: "소모품", children: [
-        { label: "올인원 필터" },
-        { label: "프리 필터" },
+      { label: "소모품", pill: true, children: [
+        { label: "올인원 필터", thumb: "gnb_image-72515076.jpg" },
+        { label: "프리 필터", thumb: "gnb_image-72515076.jpg" },
       ]},
-      { label: "이벤트" },
-      { label: "카드 혜택", screen: "card" },
+      { label: "이벤트", thumb: "pasted-1787530154127-0.png", descOnHover: true, desc: "시즌 프로모션과 구독 혜택을 모아 보여주는 공간" },
+      { label: "카드혜택", screen: "card", thumb: "gnb_image-e24f13dd.png", descOnHover: true, desc: "제휴 카드 무이자, 할인 혜택 안내" },
     ]},
     { name: "브랜드", strategyTag: "신뢰 | Trust", strategy: "브랜드 헤리티지와 철학을 소개하는 공간", items: [
-      { label: "브랜드 스토리", screen: "brandstory" },
-      { label: "브랜드 자산", screen: "brandasset" },
-      { label: "브랜드 소식", children: [
-        { label: "나무엑스 뉴스", screen: "news" },
-        { label: "인스타그램", screen: "instagram" },
-        { label: "유튜브", screen: "youtube" },
+      { label: "브랜드 스토리", screen: "brandstory", thumb: "gnb_image-d02baacc.png", descOnHover: true, desc: "NAMUH = HUMAN, 브랜드 철학과 헤리티지를 전하는 공간" },
+      { label: "브랜드 자산", screen: "brandasset", thumb: "gnb_image-9a7b8537.png", descOnHover: true, desc: "BI, 심볼, 컬러, 패턴 등 브랜드 자산 가이드" },
+      { label: "브랜드 소식", thumb: "gnb_image-28a32ed2.png", descOnHover: true, desc: "PR 뉴스와 채널 콘텐츠를 한 흐름으로 모은 소식 허브", children: [
+        { label: "나무엑스 뉴스", screen: "news", thumb: "gnb_image-28a32ed2.png" },
+        { label: "인스타그램", screen: "instagram", thumb: "gnb_image-28a32ed2.png" },
+        { label: "유튜브", screen: "youtube", thumb: "gnb_image-28a32ed2.png" },
       ]},
     ]},
     { name: "고객지원", to: "support", strategyTag: "유지 | Retention", strategy: "구매 이후를 끝까지 돌보는 지원 공간", items: [
-      { label: "공지사항", screen: "notice" },
-      { label: "업데이트 소식", screen: "growx", isNew: true },
-      { label: "FAQ", screen: "faq" },
-      { label: "문의하기" },
-      { label: "제품 지원", children: [
-        { label: "A/S 안내" },
-        { label: "서비스 센터", screen: "svccenter" },
-        { label: "제품 설명서", screen: "manual" },
-        { label: "제품 활용 영상", screen: "usevideo" },
+      { label: "공지사항", screen: "notice", thumb: "gnb_image-46a78a93.png", descOnHover: true, desc: "서비스, 배송, 점검 등 고객에게 먼저 알리는 공지" },
+      { label: "업데이트 소식", screen: "growx", isNew: true, thumb: "gnb_image-405070e4.png", descOnHover: true, desc: "OTA로 매일 자라는 로봇의 업데이트 기록" },
+      { label: "FAQ", screen: "faq", thumb: "gnb_image-709d5c2e.png", descOnHover: true, desc: "구독, 설치, 사용 관련 자주 묻는 질문" },
+      { label: "문의하기", thumb: "gnb_image-6277eb47.png", descOnHover: true, desc: "1:1 문의와 상담 채널 연결" },
+      { label: "제품 지원", thumb: "gnb_image-11116ad2.png", descOnHover: true, desc: "A/S, 서비스 센터, 설명서, 활용 영상까지 사용 이후를 돌보는 지원", children: [
+        { label: "A/S 안내", thumb: "gnb_image-11116ad2.png" },
+        { label: "서비스 센터", screen: "svccenter", thumb: "gnb_image-11116ad2.png" },
+        { label: "제품 설명서", screen: "manual", thumb: "gnb_image-11116ad2.png" },
+        { label: "제품 활용 영상", screen: "usevideo", thumb: "gnb_image-11116ad2.png" },
       ]},
     ]},
     { name: "함께 만드는 로봇 시대", to: "roboEraHub", isNew: true, strategyTag: "유입&체류 | Engagement", strategy: "고객과 함께 로봇 시대를 만들어가는 참여 공간", items: [

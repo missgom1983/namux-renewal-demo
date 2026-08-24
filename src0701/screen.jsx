@@ -319,7 +319,7 @@
 
   function HeroFilm({ data, onClose, onGo }) {
     const LIMIT = 10;
-    const [phase, setPhase] = useState("film"); // film | banner
+    const [phase, setPhase] = useState(data.heroVideo ? "film" : "banner"); // film | banner
     const [pct, setPct] = useState(0);
     const vidRef = useRef(null);
     const scrollRef = useRef(null);
@@ -381,6 +381,7 @@
               opacity: showFilm ? 1 : 0, transition: "opacity 2000ms cubic-bezier(.4,0,.2,1)", pointerEvents: "none", zIndex: 2 }}></div>
 
             {/* 히어로 밴드 — 영상 (재생 중엔 화면 전체를 채움) */}
+            {data.heroVideo &&
             <div style={{ position: "fixed", inset: 0, zIndex: 3,
               opacity: showFilm ? 1 : 0, transform: showFilm ? "scale(1)" : "scale(1.045)", transformOrigin: "50% 42%",
               filter: showFilm ? "blur(0px)" : "blur(3px)",
@@ -400,41 +401,15 @@
               <div style={{ position: "absolute", left: 0, right: 0, bottom: 0, height: 4, background: "rgba(255,255,255,.2)" }}>
                 <div style={{ height: "100%", width: pct + "%", background: "var(--ws-mint)", transition: "width 120ms linear" }}></div>
               </div>
-            </div>
+            </div>}
 
-            {/* 히어로 밴드 — 로사시 배너 위 CTA */}
-            <div style={{ position: "absolute", left: 0, width: "100%", top: (HB - 3.0) + "%", transform: "translateY(-50%)",
-              display: "flex", justifyContent: "flex-end", padding: "0 clamp(20px,5vw,72px)", boxSizing: "border-box",
-              opacity: showFilm ? 0 : 1, transition: "opacity 800ms var(--ease-out) 1500ms",
-              pointerEvents: showFilm ? "none" : "auto" }}>
-              <button onClick={() => { onGo ? onGo() : scrollToContent(); }}
-                onMouseEnter={(e) => { e.currentTarget.style.transform = "scale(1.05)"; }}
-                onMouseLeave={(e) => { e.currentTarget.style.transform = "scale(1)"; }}
-                style={{
-                cursor: "pointer", position: "relative", display: "inline-flex", alignItems: "center", gap: 13,
-                padding: "18px 20px 18px 28px", borderRadius: 999, border: "2px solid rgba(255,255,255,.9)",
-                background: "var(--ws-mint)", color: "var(--ws-black)",
-                fontSize: 17, fontWeight: 800, letterSpacing: "-0.01em",
-                boxShadow: "0 14px 40px rgba(8,9,11,.55), 0 0 0 6px rgba(8,9,11,.28)",
-                transition: "transform 220ms var(--ease-out)", animation: "rb-cta 2.2s ease-in-out infinite",
-              }}>
-                <span style={{ position: "absolute", inset: -3, borderRadius: 999, border: "2px solid var(--ws-mint)", animation: "rb-cta-ring 2.2s ease-out infinite", pointerEvents: "none" }}></span>
-                <span style={{ display: "inline-flex", alignItems: "center", gap: 6 }}>
-                  <svg width="17" height="17" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2l1.6 5.4L19 9l-5.4 1.6L12 16l-1.6-5.4L5 9l5.4-1.6z"/></svg>
-                  로사시 캠페인 보러가기
-                </span>
-                <span style={{ width: 34, height: 34, borderRadius: "50%", background: "var(--ws-black)", color: "var(--ws-mint)", display: "flex", alignItems: "center", justifyContent: "center" }}>
-                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.6" strokeLinecap="round" strokeLinejoin="round" style={{ animation: "rb-cta-arrow 1.6s ease-in-out infinite" }}><path d="M12 5v14M6 13l6 6 6-6"/></svg>
-                </span>
-              </button>
-            </div>
           </div>
         </div>
 
         {/* 상단 컨트롤 (고정) */}
         <div style={{ position: "fixed", top: 16, left: 18, right: 18, display: "flex", alignItems: "center", justifyContent: "flex-end", gap: 12, pointerEvents: "none" }}>
           <div style={{ pointerEvents: "auto", display: "flex", gap: 10 }}>
-            {!showFilm && (
+            {!showFilm && data.heroVideo && (
               <button onClick={replay} style={{ cursor: "pointer", height: 42, padding: "0 16px", borderRadius: 999, border: "1px solid rgba(255,255,255,.28)", background: "rgba(8,9,11,.55)", backdropFilter: "blur(6px)", color: "#fff", fontSize: 12.5, fontWeight: 700 }}>↺ 영상 다시</button>
             )}
             <CloseBtn onClose={onClose} />
@@ -517,7 +492,7 @@
     useEffect(() => {
       const el = fsScrollRef.current; if (el) el.scrollTo({ top: 0, behavior: "auto" });
     }, [side]);
-    const isFilm = side === "tobe" && !!s.heroVideo;
+    const isFilm = side === "tobe" && !!s.heroBanner;
     const isSplit = side === "tobe" && !!s.splitView;
 
     useEffect(() => {

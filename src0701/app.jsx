@@ -64,15 +64,42 @@
     return <MegaRow node={node} label={it.label} screen={it.screen} desc={it.desc} pre={it.pre} selected={selected} onSelect={onSelect} setOpen={setOpen} />;
   }
 
+  /* 썸네일 크로스페이드 — 전환 중 빈 화면 없이 이전 컷을 유지 */
+  function FadeImg({ src, height }) {
+    const [layers, setLayers] = useState([{ src: src, id: 0 }]);
+    const idRef = useRef(0);
+    useEffect(() => {
+      if (layers[layers.length - 1].src === src) return;
+      idRef.current += 1;
+      const id = idRef.current;
+      setLayers((L) => L.slice(-1).concat([{ src: src, id: id }]));
+      const t = setTimeout(() => setLayers((L) => L.filter((l) => l.id === id)), 320);
+      return () => clearTimeout(t);
+    }, [src]);
+    return (
+      <div style={{ position: "relative", width: "100%", height: height, borderRadius: 12, overflow: "hidden", background: "rgba(255,255,255,.05)", justifySelf: "end" }}>
+        {layers.map((l, i) =>
+          <img key={l.id} src={l.src} alt="" style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover", objectPosition: "top center",
+            opacity: 1, animation: i > 0 ? "omFadeIn 260ms var(--ease-out) both" : "none" }} />)}
+      </div>);
+  }
+
   /* ---- GNB (검정 바) + 메가메뉴 ---- */
   const MEGA_WIDE = {
     "함께 만드는 로봇 시대": "gnb_image.jpg",
     "웰니스 로봇": "gnb_image-d7b8e515.jpg",
+    "스토어": "gnb_image-5a8d7bb4.jpg",
+    "브랜드": "gnb_image-f99b6d19.png",
+    "고객지원": "gnb_image-d73d4741.png",
   };
 
   function Gnb({ selected, onSelect }) {
     const [open, setOpen] = useState(null);
     const [hovItem, setHovItem] = useState(null);
+    const closeT = useRef(null);
+    const openMenu = (idx) => { if (closeT.current) { clearTimeout(closeT.current); closeT.current = null; } setOpen(idx); };
+    const scheduleClose = () => { if (closeT.current) clearTimeout(closeT.current); closeT.current = setTimeout(() => setOpen(null), 220); };
+    useEffect(() => () => { if (closeT.current) clearTimeout(closeT.current); }, []);
     const [myOpen, setMyOpen] = useState(false);
     // 메가메뉴 이미지 사전 로드 — 첫 마우스오버에서 한 템포 늦게 뜨는 현상 제거
     useEffect(() => {
@@ -85,16 +112,17 @@
         <div style={{ maxWidth: 1320, margin: "0 auto", height: 62, padding: "0 var(--gutter)", display: "grid", gridTemplateColumns: "1fr auto 1fr", alignItems: "center" }}>
           <button onClick={() => {onSelect("home");window.scrollTo({ top: 0 });}} style={{ justifySelf: "start", display: "flex", background: "none", border: "none", cursor: "pointer", padding: 0 }}><Logo /></button>
 
-          <nav style={{ justifySelf: "center", display: "flex", gap: 4, height: "100%" }}>
+          <nav onMouseEnter={() => { if (closeT.current) { clearTimeout(closeT.current); closeT.current = null; } }} onMouseLeave={scheduleClose} style={{ justifySelf: "center", display: "flex", gap: 0, height: "100%" }}>
             {GNB.map((m, idx) => {
               const isActive = m.items.some(hasScreen) || m.to && m.to === selected;
               const isOpen = open === idx;
               const wide = MEGA_WIDE[m.name];
-              const hovThumb = (m.items.find((it) => it.label === hovItem) || {}).thumb;
+              const flat = m.items.reduce((acc, it) => acc.concat([it], it.children || []), []);
+              const hovThumb = (flat.find((it) => it.label === hovItem) || {}).thumb;
               const panelPos = { left: 0 };
               const hasDesc = m.items.some((it) => it.desc);
               return (
-                <div key={m.name} onMouseEnter={() => setOpen(idx)} onMouseLeave={() => setOpen(null)}
+                <div key={m.name} onMouseEnter={() => openMenu(idx)} onMouseLeave={scheduleClose}
                 style={{ position: wide ? "static" : "relative", display: "flex", alignItems: "center" }}>
                   <button onClick={() => {if (m.to && !wide) {onSelect(m.to);setOpen(null);}}} onMouseEnter={() => setHovItem("::title::" + m.name)} onMouseLeave={() => setHovItem(null)} style={{
                     position: "relative",
@@ -111,8 +139,8 @@
                   </button>
 
                   {isOpen && m.items.length > 0 && wide &&
-                  <div style={{ position: "absolute", top: 62, left: 0, right: 0, background: "rgba(52,52,52,.97)", backdropFilter: "blur(18px)", WebkitBackdropFilter: "blur(18px)", borderTop: "1px solid rgba(255,255,255,.05)", borderBottom: "1px solid rgba(255,255,255,.07)", boxShadow: "0 34px 70px rgba(0,0,0,.45)" }}>
-                      <div style={{ maxWidth: 1320, margin: "0 auto", padding: "22px var(--gutter) 26px", display: "grid", gridTemplateColumns: "minmax(0,1fr) minmax(240px,340px)", gap: "clamp(28px,4vw,72px)", alignItems: "center" }}>
+                  <div onMouseLeave={() => setHovItem(null)} style={{ position: "absolute", top: 62, left: 0, right: 0, background: "rgba(52,52,52,.97)", backdropFilter: "blur(18px)", WebkitBackdropFilter: "blur(18px)", borderTop: "1px solid rgba(255,255,255,.05)", borderBottom: "1px solid rgba(255,255,255,.07)", boxShadow: "0 34px 70px rgba(0,0,0,.45)" }}>
+                      <div style={{ maxWidth: 1320, margin: "0 auto", padding: "22px var(--gutter) 26px", display: "grid", gridTemplateColumns: "minmax(0,1fr) minmax(240px,340px)", gap: "clamp(28px,4vw,72px)", alignItems: "start", height: 252, boxSizing: "content-box" }}>
                         <div>
                           <div style={{ display: "flex", alignItems: "baseline", gap: 14, marginBottom: 10 }}
                             onMouseEnter={() => setHovItem("::title::" + m.name)} onMouseLeave={() => setHovItem(null)}>
@@ -124,19 +152,48 @@
                               const clickable = !!it.screen || !!it.url;
                               const on = !!it.screen && it.screen === selected;
                               const hov = hovItem === it.label;
-                              return (
+                              const row = (
                                 <button key={it.label} onClick={() => { if (it.url) { window.open(it.url, "_blank", "noopener"); setOpen(null); } else if (it.screen) { onSelect(it.screen); setOpen(null); } }}
                                 onMouseEnter={() => setHovItem(it.label)}
-                                onMouseLeave={() => setHovItem(null)}
                                 style={{ display: "flex", alignItems: "baseline", gap: 18, background: hov ? "rgba(255,255,255,.06)" : "none", border: "none", borderRadius: 8, padding: "6px 10px", margin: "0 -10px", textAlign: "left", cursor: clickable ? "pointer" : "default", fontFamily: "inherit",
                                   fontSize: 14.5, fontWeight: 700, letterSpacing: "-0.01em", color: on || hov ? "var(--ws-mint)" : clickable ? "#fff" : "rgba(255,255,255,.62)", transition: "color var(--dur-fast) var(--ease-out), background var(--dur-fast) var(--ease-out)" }}>
                                   <span>{it.label}{it.isNew && <sup style={{ fontSize: 8.5, fontWeight: 800, letterSpacing: "0.06em", color: hov ? "#fff" : "var(--ws-mint)", marginLeft: 3, transition: "color var(--dur-fast) var(--ease-out)" }}>NEW</sup>}</span>
                                   {it.desc && <span style={{ fontSize: 11.5, fontWeight: 400, fontStyle: "italic", color: hov ? "rgba(255,255,255,.9)" : "rgba(255,255,255,.68)", letterSpacing: "0", opacity: !it.descOnHover || hov ? 1 : 0, transition: "opacity var(--dur-fast) var(--ease-out), color var(--dur-fast) var(--ease-out)" }}>{it.desc}</span>}
                                 </button>);
+                              if (it.pill) {
+                                return (
+                                  <div key={it.label} style={{ display: "flex", alignItems: "center", gap: 12, padding: "3px 0", marginLeft: 16 }}>
+                                    <span style={{ flex: "0 0 auto", minWidth: 66, textAlign: "center", fontSize: 10.5, fontWeight: 700, letterSpacing: "-0.01em", color: "rgba(255,255,255,.72)", background: "rgba(255,255,255,.10)", borderRadius: 999, padding: "4px 10px" }}>{it.label}</span>
+                                    <div style={{ display: "flex", flexWrap: "wrap", gap: "2px 6px" }}>
+                                      {(it.children || []).map((c) => {
+                                        const ck = !!c.screen;
+                                        const con = ck && c.screen === selected;
+                                        const chov = hovItem === c.label;
+                                        return (
+                                          <button key={c.label} onClick={() => { if (c.screen) { onSelect(c.screen); setOpen(null); } }}
+                                          onMouseEnter={() => setHovItem(c.label)}
+                                          style={{ background: chov ? "rgba(255,255,255,.06)" : "none", border: "none", borderRadius: 7, padding: "4px 8px", cursor: ck ? "pointer" : "default", fontFamily: "inherit", fontSize: 13.5, fontWeight: 600, letterSpacing: "-0.01em", color: con || chov ? "var(--ws-mint)" : ck ? "rgba(255,255,255,.9)" : "rgba(255,255,255,.62)", transition: "color var(--dur-fast) var(--ease-out), background var(--dur-fast) var(--ease-out)" }}>{c.label}</button>);
+                                      })}
+                                    </div>
+                                  </div>);
+                              }
+                              const kids = it.children && it.children.length > 0 &&
+                                <div key={it.label + "-kids"} style={{ display: "flex", flexWrap: "wrap", gap: "2px 4px", margin: "0 0 4px 22px", paddingLeft: 12, borderLeft: "1px solid rgba(255,255,255,.12)" }}>
+                                  {it.children.map((c) => {
+                                    const ck = !!c.screen;
+                                    const con = ck && c.screen === selected;
+                                    const chov = hovItem === c.label;
+                                    return (
+                                      <button key={c.label} onClick={() => { if (c.screen) { onSelect(c.screen); setOpen(null); } }}
+                                      onMouseEnter={() => setHovItem(c.label)}
+                                      style={{ background: chov ? "rgba(255,255,255,.06)" : "none", border: "none", borderRadius: 7, padding: "4px 9px", textAlign: "left", cursor: ck ? "pointer" : "default", fontFamily: "inherit", fontSize: 13, fontWeight: 600, letterSpacing: "-0.01em", color: con || chov ? "var(--ws-mint)" : ck ? "rgba(255,255,255,.86)" : "rgba(255,255,255,.5)", transition: "color var(--dur-fast) var(--ease-out), background var(--dur-fast) var(--ease-out)" }}>{c.label}</button>);
+                                  })}
+                                </div>;
+                              return kids ? <React.Fragment key={it.label}>{row}{kids}</React.Fragment> : row;
                             })}
                           </div>
                         </div>
-                        <img src={hovThumb || wide} alt="" style={{ display: "block", width: "100%", height: "auto", borderRadius: 12, justifySelf: "end" }} />
+                        <FadeImg src={hovThumb || wide} height={200} />
                       </div>
                     </div>
                   }
@@ -203,7 +260,9 @@
                 </div>
               </div>}
             </div>
-            <Icon d={<><path d="M6 7h13l-1.4 9.2a2 2 0 0 1-2 1.8H9.4a2 2 0 0 1-2-1.8L6 4H3" /><circle cx="9" cy="20.5" r="1.2" fill="currentColor" stroke="none" /><circle cx="17" cy="20.5" r="1.2" fill="currentColor" stroke="none" /></>} />
+            <button onClick={() => onSelect("brief1p")} aria-label="장바구니" title="닷컴 리뉴얼 보고 1P" style={{ display: "flex", alignItems: "center", background: "none", border: "none", padding: 0, cursor: "pointer", color: selected === "brief1p" ? "var(--ws-mint)" : "#fff", transition: "color var(--dur-fast) var(--ease-out)" }}>
+              <Icon d={<><path d="M6 7h13l-1.4 9.2a2 2 0 0 1-2 1.8H9.4a2 2 0 0 1-2-1.8L6 4H3" /><circle cx="9" cy="20.5" r="1.2" fill="currentColor" stroke="none" /><circle cx="17" cy="20.5" r="1.2" fill="currentColor" stroke="none" /></>} />
+            </button>
           </div>
         </div>
       </header>);
@@ -932,6 +991,189 @@
 
   }
 
+  /* ---- 스티키 시퀀스 (스크롤 진행도에 따라 프레임 교차 전환) ---- */
+  function StickySeq({ frames, height, onExit }) {
+    const [p, setP] = useState(0);
+    const ref = useRef(null);
+    const n = frames.length;
+    const onScroll = () => {
+      const el = ref.current; if (!el) return;
+      const max = el.scrollHeight - el.clientHeight;
+      setP(max > 0 ? Math.min(1, Math.max(0, el.scrollTop / max)) : 0);
+    };
+    const pos = p * (n - 1) * 1.06;
+    const idx = Math.min(n - 1, Math.round(pos));
+    const cur = frames[idx];
+    return (
+      <div ref={ref} onScroll={onScroll} style={{ position: "relative", height: height, overflowY: "auto", background: "#0A0B0D" }}>
+        <div style={{ position: "sticky", top: 0, height: "100%", overflow: "hidden" }}>
+          {frames.map((f, i) => {
+            const d = Math.abs(pos - i);
+            return <img key={f.src} src={f.src} alt={f.label || ""} draggable={false}
+              style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "contain", objectPosition: "center", opacity: d >= 1 ? 0 : Math.pow(1 - d, 0.8), transition: "opacity 120ms linear" }} />;
+          })}
+          <div style={{ position: "absolute", left: 18, bottom: 18, display: "flex", alignItems: "center", gap: 10, padding: "8px 14px", borderRadius: 999, background: "rgba(10,11,13,.62)", backdropFilter: "blur(10px)", WebkitBackdropFilter: "blur(10px)", border: "1px solid rgba(255,255,255,.14)" }}>
+            <span style={{ fontSize: 12.5, fontWeight: 800, color: "var(--ws-mint)", minWidth: 44 }}>{cur.time}</span>
+            <span style={{ fontSize: 12.5, color: "rgba(255,255,255,.78)" }}>{cur.label}</span>
+            <span style={{ display: "flex", gap: 5, marginLeft: 6 }}>
+              {frames.map((f, i) => <span key={f.src} style={{ width: i === idx ? 16 : 6, height: 6, borderRadius: 999, background: i === idx ? "var(--ws-mint)" : "rgba(255,255,255,.3)", transition: "width 160ms var(--ease-out), background 160ms var(--ease-out)" }}></span>)}
+            </span>
+          </div>
+          {p < 0.02 &&
+          <span style={{ position: "absolute", right: 20, bottom: 22, fontSize: 12, fontWeight: 700, letterSpacing: "0.04em", color: "rgba(255,255,255,.6)" }}>SCROLL ↓</span>}
+          {onExit &&
+          <button onClick={onExit} aria-label="닫기" style={{ position: "absolute", top: 16, right: 18, width: 40, height: 40, borderRadius: "50%", cursor: "pointer", background: "rgba(255,255,255,.12)", border: "1px solid rgba(255,255,255,.2)", color: "#fff", display: "flex", alignItems: "center", justifyContent: "center" }}>
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><path d="M6 6l12 12M18 6L6 18" /></svg>
+          </button>}
+        </div>
+        <div style={{ height: (n - 1) * 100 + 40 + "%" }}></div>
+      </div>);
+  }
+
+  function SeqStage({ screen }) {
+    const [full, setFull] = useState(false);
+    useEffect(() => {
+      if (!full) return;
+      const onKey = (e) => { if (e.key === "Escape") setFull(false); };
+      window.addEventListener("keydown", onKey);
+      const prev = document.body.style.overflow; document.body.style.overflow = "hidden";
+      return () => { window.removeEventListener("keydown", onKey); document.body.style.overflow = prev; };
+    }, [full]);
+    return (
+      <React.Fragment>
+        <div style={{ display: "flex", alignItems: "baseline", gap: 10, marginBottom: 14, flexWrap: "wrap" }}>
+          <h2 style={{ margin: 0, fontSize: 22, fontWeight: 800, letterSpacing: "-0.02em", color: "var(--text-strong)" }}>{screen.title}</h2>
+          <span style={{ fontSize: 12.5, color: "var(--text-faint)" }}>{screen.kicker}</span>
+        </div>
+        <p style={{ margin: "0 0 16px", maxWidth: 760, fontSize: 15, lineHeight: 1.62, color: "var(--text-body)" }}>{screen.desc}</p>
+        <div style={{ borderRadius: "var(--radius-card)", overflow: "hidden", border: "1px solid var(--border-subtle)", boxShadow: "var(--shadow-card)", background: "var(--surface-card)" }}>
+          <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 12, padding: "12px 16px", borderBottom: "1px solid var(--border-subtle)" }}>
+            <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+              <span style={{ fontSize: 11, fontWeight: 700, color: "var(--ws-black)", background: "var(--ws-mint)", padding: "3px 10px", borderRadius: 999 }}>리뉴얼</span>
+              <span style={{ fontSize: 12.5, color: "var(--text-muted)" }}>스크롤하면 하루의 시퀀스가 이어집니다</span>
+            </div>
+            <button onClick={() => setFull(true)} style={{ display: "inline-flex", alignItems: "center", gap: 7, cursor: "pointer", padding: "8px 14px", borderRadius: "var(--radius-pill)", border: "1px solid var(--border-default)", background: "var(--surface-card)", color: "var(--text-strong)", fontSize: 13, fontWeight: 700, fontFamily: "inherit" }}>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M8 3H5a2 2 0 0 0-2 2v3M16 3h3a2 2 0 0 1 2 2v3M21 16v3a2 2 0 0 1-2 2h-3M3 16v3a2 2 0 0 0 2 2h3" /></svg>
+              전체화면
+            </button>
+          </div>
+          <StickySeq frames={screen.frames} height="min(calc(100vh - 200px), 56.25vw)" />
+        </div>
+        {full &&
+        <div style={{ position: "fixed", inset: 0, zIndex: 900, background: "#0A0B0D" }}>
+          <StickySeq frames={screen.frames} height="100vh" onExit={() => setFull(false)} />
+        </div>}
+      </React.Fragment>);
+  }
+
+  /* ---- 보고 1P (마케팅 / 닷컴 리뉴얼) ---- */
+  function BriefBullets({ items }) {
+    return (
+      <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
+        {items.map((g, gi) =>
+          <div key={gi} style={{ display: "flex", flexDirection: "column", gap: 7 }}>
+            <div style={{ display: "flex", gap: 9, alignItems: "baseline" }}>
+              <span style={{ flex: "0 0 auto", width: 9, height: 9, border: "1.5px solid var(--text-strong)", borderRadius: 2, transform: "translateY(-1px)" }}></span>
+              <strong style={{ fontSize: 16.5, fontWeight: 800, letterSpacing: "-0.015em", color: "var(--text-strong)" }}>{g.head}</strong>
+            </div>
+            <div style={{ display: "flex", flexDirection: "column", gap: 6, marginLeft: 18 }}>
+              {(g.rows || []).map((r, ri) =>
+                <div key={ri} style={{ display: "flex", flexDirection: "column", gap: 5 }}>
+                  <div style={{ display: "flex", gap: 8, alignItems: "baseline" }}>
+                    <span style={{ flex: "0 0 auto", width: 5, height: 5, background: "var(--text-body)", transform: "translateY(-2px)" }}></span>
+                    <span style={{ fontSize: 14.5, fontWeight: r.strong === false ? 500 : 700, letterSpacing: "-0.01em", color: "var(--text-strong)" }}>{r.t}</span>
+                  </div>
+                  {(r.subs || []).length > 0 &&
+                  <div style={{ display: "flex", flexDirection: "column", gap: 4, marginLeft: 15 }}>
+                    {r.subs.map((s, si) =>
+                      <div key={si} style={{ display: "flex", gap: 7, alignItems: "baseline" }}>
+                        <span style={{ flex: "0 0 auto", width: 7, height: 1, background: "var(--text-faint)", transform: "translateY(-5px)" }}></span>
+                        <span style={{ fontSize: 13.5, fontWeight: 500, lineHeight: 1.55, color: "var(--text-body)" }}>{s}</span>
+                      </div>)}
+                  </div>}
+                </div>)}
+            </div>
+          </div>)}
+      </div>);
+  }
+
+  function BriefStage({ screen, onSelect }) {
+    const steps = [
+      { m: "3월", s: "착수", state: "done" },
+      { m: "4~8월", s: "구현", state: "done" },
+      { m: "8월 5주차", s: "기능 테스트", state: "now" },
+      { m: "9/1~", s: "보안점검", state: "done" },
+      { m: "9/14", s: "오픈", state: "goal" },
+      { m: "+4주", s: "안정화", state: "next" },
+    ];
+    return (
+      <div style={{ borderRadius: "var(--radius-card)", border: "1px solid var(--border-subtle)", boxShadow: "var(--shadow-card)", background: "var(--surface-card)", padding: "30px 34px 34px" }}>
+        <div style={{ display: "flex", alignItems: "flex-end", justifyContent: "space-between", gap: 20, paddingBottom: 10, borderBottom: "2px solid var(--ws-blue, #022452)" }}>
+          <span style={{ fontSize: 14.5, fontWeight: 700, color: "var(--text-muted)", marginRight: "auto" }}>나무엑스닷컴 리뉴얼</span>
+        </div>
+        <p style={{ margin: "20px 0 26px", fontSize: 21, fontWeight: 800, letterSpacing: "-0.02em", color: "var(--text-strong)", lineHeight: 1.4 }}>
+          기존 고도몰 임대형 → <span style={{ background: "#FCF08A", padding: "0 4px", borderRadius: 3 }}>독립몰로 닷컴 리뉴얼</span>, “구독 비즈니스 확장” 기반 강화
+        </p>
+        <div style={{ display: "grid", gridTemplateColumns: "minmax(0,1fr) minmax(0,1fr)", gap: 44 }}>
+          <div>
+            <h3 style={{ margin: "0 0 18px", paddingBottom: 9, borderBottom: "1px solid var(--border-default)", fontSize: 17, fontWeight: 800, textAlign: "center", letterSpacing: "-0.015em", color: "var(--text-strong)" }}>나무엑스닷컴 현황 및 리뉴얼 일정</h3>
+            <BriefBullets items={[
+              { head: "임대형 플랫폼(고도몰) 인한 비즈니스 제약", rows: [
+                { t: "일반 쇼핑몰 형태로 구독 비즈니스에 적합하지 않음" },
+                { t: "브랜드 경험 한계", subs: ["영상 콘텐츠 활용 제약", "고객 리뷰 업로드 제약", "고객 인터렉션 행동 (좋아요, 멘션 등)"] },
+                { t: "외부 공용 서버 환경으로 그룹 보안 기준 미흡" },
+              ]},
+              { head: "추진 계획", rows: [
+                { t: "닷컴 유지보수 인력 활용, 추가 예산 없이 개발 진행" },
+                { t: "안정적인 시스템 전환 최우선, UX/콘텐츠 순차 개선 예정" },
+              ]},
+              { head: "9/14(월) 오픈 목표" },
+            ]} />
+            <div style={{ margin: "22px 0 0", padding: "6px 4px 0" }}>
+              <div style={{ position: "relative", display: "grid", gridTemplateColumns: "repeat(6, 1fr)", alignItems: "start" }}>
+                <div style={{ position: "absolute", left: "8%", right: "12%", top: 15, height: 2, background: "var(--ws-blue, #022452)" }}></div>
+                {steps.map((s) =>
+                  <div key={s.m} style={{ position: "relative", display: "flex", flexDirection: "column", alignItems: "center", gap: 7 }}>
+                    {s.state === "now" && <span style={{ position: "absolute", top: -16, whiteSpace: "nowrap", fontSize: 11, fontWeight: 700, color: "var(--text-strong)" }}>현재 ▾</span>}
+                    <span style={{ position: "relative", zIndex: 1, width: s.state === "now" ? 17 : s.state === "goal" ? 17 : 11, height: s.state === "now" ? 17 : s.state === "goal" ? 17 : 11, borderRadius: "50%", boxSizing: "border-box",
+                      background: s.state === "now" ? "#fff" : s.state === "next" ? "var(--gray-300, #cfd4dc)" : "var(--ws-blue, #022452)",
+                      border: s.state === "now" ? "2.5px solid var(--ws-blue, #022452)" : "none", marginTop: s.state === "now" || s.state === "goal" ? 7 : 10 }}></span>
+                    <span style={{ fontSize: 13, fontWeight: 800, color: s.state === "next" ? "var(--text-faint)" : "var(--text-strong)" }}>{s.m}</span>
+                    <span style={{ fontSize: 11, fontWeight: 500, textAlign: "center", color: "var(--text-muted)" }}>{s.s}</span>
+                  </div>)}
+              </div>
+            </div>
+          </div>
+          <div>
+            <h3 style={{ margin: "0 0 18px", paddingBottom: 9, borderBottom: "1px solid var(--border-default)", fontSize: 17, fontWeight: 800, textAlign: "center", letterSpacing: "-0.015em", color: "var(--text-strong)" }}>나무엑스닷컴 리뉴얼 방향</h3>
+            <BriefBullets items={[
+              { head: "독립몰 자체 구축 및 고객 경험 개선", rows: [
+                { t: "구독 비즈니스 최적화", subs: ["브랜드 인지부터 구매 전환까지 구독 전용 구조로 재설계"] },
+                { t: "영상 콘텐츠 활용 강화", subs: ["영상 중심 배치로 직관적인 제품 이해 및 탐색 최적화"] },
+                { t: "고객 후기 우호 환경 강화", subs: ["AI 리뷰 요약 및 영상, 고화질 리뷰 확보"] },
+                { t: "그룹 보안 기준 충족", subs: ["독립 플랫폼으로 정보보안 수준 확보"] },
+              ]},
+            ]} />
+            <div style={{ display: "flex", justifyContent: "center", margin: "22px 0 14px", fontSize: 22, fontWeight: 800, color: "#D9A93C" }}>+</div>
+            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 14 }}>
+              {[
+                { q: "“함께 만드는 로봇 시대”", h: "양방향 소통 메뉴 신설", body: ["고객 인터렉션을 수집/활용하는 기능 개발", "팬덤 커뮤니티 마케팅을 위한 기반 마련"], note: "(아이디어 제안 및 베네핏 제공)" },
+                { q: "“웰니스 로봇” 스토리텔링", h: "‘로봇’ 정체성 각인, 전용 메뉴 신설", body: ["단순한 가전이 아닌, 스스로 판단하고", "행동하는 로봇으로서의 포지셔닝 확립"], note: "(제품 탐색 연계 및 맞춤 프로모션 제공)" },
+              ].map((c) =>
+                <div key={c.q} style={{ border: "1.5px solid #D9A93C", borderRadius: 8, padding: "16px 14px", textAlign: "center", display: "flex", flexDirection: "column", gap: 8 }}>
+                  <strong style={{ fontSize: 14.5, fontWeight: 800, letterSpacing: "-0.015em", color: "var(--mint-700, #12806c)" }}>{c.q}</strong>
+                  <strong style={{ fontSize: 14.5, fontWeight: 800, color: "var(--text-strong)" }}>{c.h}</strong>
+                  <div style={{ display: "flex", flexDirection: "column", gap: 2 }}>
+                    {c.body.map((b) => <span key={b} style={{ fontSize: 12.5, lineHeight: 1.5, color: "var(--text-body)" }}>{b}</span>)}
+                  </div>
+                  <span style={{ fontSize: 12, color: "var(--text-muted)" }}>{c.note}</span>
+                </div>)}
+            </div>
+          </div>
+        </div>
+      </div>);
+  }
+
   /* ---- 영상 화면 (Agentic 등 / 토글 없음) ---- */
   function VideoStage({ screen }) {
     const [full, setFull] = useState(false);
@@ -1030,6 +1272,28 @@
 
   }
 
+  /* 해시 라우팅 iframe — 해시 포함 URL을 그대로 로드하고, 로드 후 한 번 더 해시를 밀어넣어 hashchange까지 보장 */
+  function HashFrame({ src, hideTop, title, nonce }) {
+    const ref = useRef(null);
+    const hi = src.indexOf("#");
+    const hash = hi < 0 ? "" : src.slice(hi);
+    useEffect(() => {
+      if (!hash) return;
+      const el = ref.current; if (!el) return;
+      const push = () => {
+        try {
+          const w = el.contentWindow;
+          if (w.location.hash !== hash) w.location.hash = hash;
+          else { w.location.hash = ""; w.location.hash = hash; }
+        } catch (e) {}
+      };
+      const t1 = setTimeout(push, 500);
+      const t2 = setTimeout(push, 1500);
+      return () => { clearTimeout(t1); clearTimeout(t2); };
+    }, [src, nonce]);
+    return <iframe ref={ref} title={title} src={src} style={{ display: "block", width: "100%", height: "calc(100% + " + (hideTop || 0) + "px)", marginTop: -(hideTop || 0), border: "none", background: "#ededed" }}></iframe>;
+  }
+
   /* ---- 라이브 화면 (실제 페이지를 iframe으로 임베드 / TypeB) ---- */
   function LiveStage({ screen }) {
     const [full, setFull] = useState(false);
@@ -1069,7 +1333,7 @@
           </div>
           {started ?
           <div style={{ position: "relative", overflow: "hidden", height: "calc(100vh - 210px)", minHeight: 420, background: "#000" }}>
-            <iframe key={rk} title={screen.title} src={screen.iframe} style={{ display: "block", width: "100%", height: "calc(100% + " + (screen.hideTop || 0) + "px)", marginTop: -(screen.hideTop || 0), border: "none", background: "#ededed" }}></iframe>
+            <HashFrame key={rk} nonce={rk} title={screen.title} src={screen.iframe} hideTop={screen.hideTop} />
           </div> :
           <div style={{ height: "calc(100vh - 210px)", minHeight: 420, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: 18, background: "#2A2C30" }}>
             <p style={{ margin: 0, fontSize: 14, color: "rgba(255,255,255,.66)", textAlign: "center", lineHeight: 1.6 }}>시연 씬은 처음부터 재생돼야 하므로 자동 실행하지 않습니다.<br />‘실행’ 또는 ‘전체화면’을 누르면 로딩됩니다.</p>
@@ -1095,7 +1359,7 @@
               </button>
             </div>
             <div style={{ flex: 1, position: "relative", overflow: "hidden", background: "#000" }}>
-              <iframe key={rk} title={screen.title} src={screen.iframeFull || screen.iframe + "?full=1"} style={{ display: "block", width: "100%", height: "calc(100% + " + (screen.hideTop || 0) + "px)", marginTop: -(screen.hideTop || 0), border: "none", background: "#ededed" }}></iframe>
+              <HashFrame key={"fs" + rk} nonce={"fs" + rk} title={screen.title} src={screen.iframeFull || screen.iframe} hideTop={screen.hideTop} />
             </div>
           </div>
         )}
@@ -1131,6 +1395,8 @@
 
     let stage;
     if (screen.type === "live") stage = <LiveStage key={screen.id} screen={screen} />;else
+    if (screen.type === "seq") stage = <SeqStage key={screen.id} screen={screen} />;else
+    if (screen.type === "brief") stage = <BriefStage key={screen.id} screen={screen} onSelect={(id) => { setSelected(id); window.scrollTo({ top: 0 }); }} />;else
     if (screen.type === "report") stage = <ReportStage key={screen.id} screen={screen} />;else
     if (screen.type === "video") stage = <VideoStage key={screen.id} screen={screen} />;else
     if (screen.type === "page") stage = <PageStage key={screen.id} screen={screen} />;else
@@ -1145,7 +1411,6 @@
         <main style={{ flex: 1, maxWidth: 1320, width: "100%", margin: "0 auto", padding: "24px var(--gutter) 64px", boxSizing: "border-box" }}>
           <Boundary key={selected}>{stage}</Boundary>
         </main>
-        <Footer />
         {fs && <FullscreenModal screen={fs.screen} side={fs.side} setSide={setModalSide} onClose={closeFs} onGo={() => { closeFs(); setSelected("robotEra"); window.scrollTo({ top: 0 }); }} />}
       </div>);
 
