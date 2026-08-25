@@ -1097,6 +1097,109 @@
       </div>);
   }
 
+  /* ---- 보고 1P 상단 칩 (문서 / 외부 화면 전환) ---- */
+  const BRIEF_TABS = [
+    { id: "renewal", label: "리뉴얼", note: "닷컴 리뉴얼 보고 1P" },
+    { id: "qa", label: "통합 테스트", note: "테스트 시나리오 / 결과",
+      url: "https://docs.google.com/spreadsheets/d/1ZyAEfYGdQpCiiamD4DSLjvYCDksUGm2rsVr22ElzZzo/preview",
+      openUrl: "https://docs.google.com/spreadsheets/d/1ZyAEfYGdQpCiiamD4DSLjvYCDksUGm2rsVr22ElzZzo/edit?usp=sharing" },
+    { id: "sysmap", label: "시스템 구성", note: "구성도 / 연동 범위",
+      url: "https://docs.google.com/presentation/d/1x6H_1quqOWeWuDHMSGThQjgxOV1SKHmQ5NohRh3qU3c/embed?rm=minimal&start=false&loop=false&slide=id.p2",
+      openUrl: "https://docs.google.com/presentation/d/1x6H_1quqOWeWuDHMSGThQjgxOV1SKHmQ5NohRh3qU3c/edit?usp=sharing",
+      subs: [
+        { label: "2페이지", url: "https://docs.google.com/presentation/d/1x6H_1quqOWeWuDHMSGThQjgxOV1SKHmQ5NohRh3qU3c/embed?rm=minimal&start=false&loop=false&slide=id.p2" },
+        { label: "3페이지", url: "https://docs.google.com/presentation/d/1x6H_1quqOWeWuDHMSGThQjgxOV1SKHmQ5NohRh3qU3c/embed?rm=minimal&start=false&loop=false&slide=id.p3" },
+      ] },
+    { id: "datalayer", label: "데이터 레이어", note: "이벤트/파라미터 정의서",
+      url: "https://docs.google.com/spreadsheets/d/1_NpVSLI9FTtZ3U19YhpWo5AI9H_EvZZemcXeJqHY7yI/preview",
+      openUrl: "https://docs.google.com/spreadsheets/d/1_NpVSLI9FTtZ3U19YhpWo5AI9H_EvZZemcXeJqHY7yI/edit?usp=sharing" },
+    { id: "alimtalk", label: "알림톡", note: "발송 시나리오 정의서",
+      url: "https://docs.google.com/spreadsheets/d/1nKzUYePRFGh_uC8Nx6XWUJK9kFX-Drgp8aAgnq3AsSE/preview",
+      openUrl: "https://docs.google.com/spreadsheets/d/1nKzUYePRFGh_uC8Nx6XWUJK9kFX-Drgp8aAgnq3AsSE/edit?usp=sharing" },
+    { id: "gift", label: "함께 선물하기", note: "구독을 선물로 — 크루 프로토타입 (모바일 화면)",
+      url: "https://missgom1983.github.io/namuhx-crew-prototype3/", zoom: 0.75 },
+  ];
+
+  function BriefChips({ tab, onTab }) {
+    return (
+      <div style={{ display: "flex", flexWrap: "wrap", alignItems: "center", gap: 8, marginBottom: 16 }}>
+        {BRIEF_TABS.map((t) => {
+          const on = tab === t.id;
+          return (
+            <button key={t.id} onClick={() => onTab(t.id)} title={t.note}
+              style={{ display: "inline-flex", alignItems: "center", gap: 8, padding: "9px 16px", borderRadius: "var(--radius-pill)", cursor: "pointer", fontFamily: "inherit", fontSize: 13.5, fontWeight: 700, letterSpacing: "-0.01em",
+                border: on ? "1.5px solid var(--border-strong, #0A0B0D)" : "1px solid var(--border-subtle)",
+                background: on ? "var(--ws-mint)" : "var(--surface-card)",
+                color: on ? "var(--ws-black)" : "var(--text-muted)" }}>
+              <span style={{ width: 6, height: 6, borderRadius: "50%", background: on ? "var(--ws-black)" : "var(--gray-300, #cfd4dc)" }}></span>
+              {t.label}
+            </button>);
+        })}
+      </div>);
+  }
+
+  function BriefFrame({ tab }) {
+    const t = BRIEF_TABS.find((x) => x.id === tab);
+    const [si, setSi] = useState(0);
+    const [full, setFull] = useState(false);
+    React.useEffect(() => { setSi(0); setFull(false); }, [tab]);
+    React.useEffect(() => {
+      if (!full) return;
+      const onKey = (e) => { if (e.key === "Escape") setFull(false); };
+      window.addEventListener("keydown", onKey);
+      const prev = document.body.style.overflow; document.body.style.overflow = "hidden";
+      return () => { window.removeEventListener("keydown", onKey); document.body.style.overflow = prev; };
+    }, [full]);
+    if (!t) return null;
+    const src = t.subs ? t.subs[si].url : t.url;
+    return (
+      <div style={{ borderRadius: "var(--radius-card)", overflow: "hidden", border: "1px solid var(--border-subtle)", boxShadow: "var(--shadow-card)", background: "var(--surface-card)" }}>
+        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 12, padding: "12px 16px", borderBottom: "1px solid var(--border-subtle)" }}>
+          <div style={{ display: "flex", alignItems: "baseline", gap: 10, minWidth: 0 }}>
+            <strong style={{ fontSize: 15, fontWeight: 800, letterSpacing: "-0.015em", color: "var(--text-strong)" }}>{t.label}</strong>
+            <span style={{ fontSize: 12.5, color: "var(--text-faint)", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{t.note}</span>
+          </div>
+          <div style={{ display: "flex", alignItems: "center", gap: 8, flex: "0 0 auto" }}>
+          {t.subs &&
+          <div style={{ display: "flex", gap: 4, padding: 3, borderRadius: 999, background: "var(--gray-100)" }}>
+            {t.subs.map((sb, i) =>
+              <button key={sb.label} onClick={() => setSi(i)} style={{ padding: "5px 14px", borderRadius: 999, border: "none", cursor: "pointer", fontFamily: "inherit", fontSize: 12.5, fontWeight: 700, background: si === i ? "var(--surface-card)" : "transparent", color: si === i ? "var(--text-strong)" : "var(--text-muted)", boxShadow: si === i ? "var(--shadow-card)" : "none" }}>{sb.label}</button>)}
+          </div>}
+          {t.url && t.zoom &&
+          <button onClick={() => setFull(true)}
+            style={{ display: "inline-flex", alignItems: "center", gap: 7, flex: "0 0 auto", cursor: "pointer", padding: "8px 14px", borderRadius: "var(--radius-pill)", border: "none", background: "var(--ws-mint)", color: "var(--ws-black)", fontSize: 13, fontWeight: 700, fontFamily: "inherit" }}>
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M8 3H5a2 2 0 0 0-2 2v3M16 3h3a2 2 0 0 1 2 2v3M21 16v3a2 2 0 0 1-2 2h-3M3 16v3a2 2 0 0 0 2 2h3" /></svg>
+            전체화면 보기
+          </button>}
+          {t.url &&
+          <a href={t.openUrl || t.url} target="_blank" rel="noreferrer"
+            style={{ display: "inline-flex", alignItems: "center", gap: 7, flex: "0 0 auto", padding: "8px 14px", borderRadius: "var(--radius-pill)", border: "1px solid var(--border-default)", background: "var(--surface-card)", color: "var(--text-strong)", fontSize: 13, fontWeight: 700, textDecoration: "none" }}>
+            새 창에서 열기
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M14 4h6v6M20 4l-9 9M18 14v5a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h5" /></svg>
+          </a>}
+          </div>
+        </div>
+        {t.url ? t.zoom ?
+        <div style={{ position: "relative", overflow: "hidden", height: "calc(100vh - 250px)", minHeight: 520, background: "#ededed" }}>
+          <iframe key={t.id} title={t.label} src={src}
+            style={{ display: "block", border: "none", background: "#fff", width: (100 / t.zoom) + "%", height: (100 / t.zoom) + "%", transform: "scale(" + t.zoom + ")", transformOrigin: "0 0" }}></iframe>
+        </div> :
+        <iframe key={t.id + si} title={t.label} src={src} style={{ display: "block", width: "100%", height: "calc(100vh - 250px)", minHeight: 520, border: "none", background: "#ededed" }}></iframe> :
+        <div style={{ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: 8, minHeight: 320, padding: 32, background: "var(--gray-50)", textAlign: "center" }}>
+          <strong style={{ fontSize: 15, color: "var(--text-strong)" }}>화면 준비 중</strong>
+          <span style={{ fontSize: 13, lineHeight: 1.6, color: "var(--text-muted)" }}>링크를 알려주시면 이 자리에 바로 붙입니다.</span>
+        </div>}
+        {full &&
+        <div style={{ position: "fixed", inset: 0, zIndex: 900, background: "var(--gray-100)" }}>
+          <iframe title={t.label + " 전체화면"} src={src} style={{ display: "block", width: "100%", height: "100%", border: "none", background: "#fff" }}></iframe>
+          <button onClick={() => setFull(false)} aria-label="닫기"
+            style={{ position: "absolute", top: 16, right: 18, width: 40, height: 40, borderRadius: "50%", cursor: "pointer", background: "rgba(8,9,11,.72)", border: "1px solid rgba(255,255,255,.2)", color: "#fff", display: "flex", alignItems: "center", justifyContent: "center" }}>
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><path d="M6 6l12 12M18 6L6 18" /></svg>
+          </button>
+        </div>}
+      </div>);
+  }
+
   function BriefStage({ screen, onSelect }) {
     const steps = [
       { m: "3월", s: "착수", state: "done" },
@@ -1106,7 +1209,11 @@
       { m: "9/14", s: "오픈", state: "goal" },
       { m: "+4주", s: "안정화", state: "next" },
     ];
+    const [tab, setTab] = useState("renewal");
     return (
+      <React.Fragment>
+      <BriefChips tab={tab} onTab={setTab} />
+      {tab !== "renewal" ? <BriefFrame tab={tab} /> :
       <div style={{ borderRadius: "var(--radius-card)", border: "1px solid var(--border-subtle)", boxShadow: "var(--shadow-card)", background: "var(--surface-card)", padding: "30px 34px 34px" }}>
         <div style={{ display: "flex", alignItems: "flex-end", justifyContent: "space-between", gap: 20, paddingBottom: 10, borderBottom: "2px solid var(--ws-blue, #022452)" }}>
           <span style={{ fontSize: 14.5, fontWeight: 700, color: "var(--text-muted)", marginRight: "auto" }}>나무엑스닷컴 리뉴얼</span>
@@ -1171,7 +1278,8 @@
             </div>
           </div>
         </div>
-      </div>);
+      </div>}
+      </React.Fragment>);
   }
 
   /* ---- 영상 화면 (Agentic 등 / 토글 없음) ---- */

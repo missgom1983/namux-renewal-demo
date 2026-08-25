@@ -411,7 +411,7 @@
       id: "robotEra", type: "page", stageTag: "리뉴얼",
       kicker: "함께 만드는 로봇 시대",
       title: "로봇과 사는 시대",
-      src: "assets/robot-era-renewal.png", ratio: 1920 / 7058,
+      src: "KakaoTalk_Photo_2026-08-24-15-09-16 002.png", ratio: 5912 / 1920,
       desc: "리뉴얼에 반영되는 페이지입니다. 고도몰 구성과 흡사해 비교 없이 리뉴얼 화면만 노출합니다. 브랜드 필름 → 릴레이 숏폼 → 셀럽/인플루언서 영상 리뷰 → 나무엑스 꾸미기 참여 유도까지, 로봇과 사는 일상을 영상 중심으로 이어 붙였습니다.",
     },
     imagine: {
