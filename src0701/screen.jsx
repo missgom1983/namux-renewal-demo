@@ -163,7 +163,7 @@
   }
 
   /* 인라인 화면 뷰어 */
-  function ScreenViewer({ screen, side, setSide, onFullscreen, focus, onFocusIdx }) {
+  function ScreenViewer({ screen, side, setSide, onFullscreen, onLive, focus, onFocusIdx }) {
     const s = screen[side];
     const scrollRef = useRef(null);
     const [ai, setAi] = useState(false);
@@ -171,6 +171,13 @@
     const [sweeping, setSweeping] = useState(false);
     const [zoomOff, setZoomOff] = useState(null);
     const [seqI, setSeqI] = useState(0);
+    const [liveOn, setLiveOn] = useState(true);
+    useEffect(() => { setLiveOn(true); }, [side, screen.id]);
+    const showLive = liveOn && side === "tobe" && screen.live;
+    const [liveStarted, setLiveStarted] = useState(false);
+    useEffect(() => { setLiveStarted(false); }, [side, screen.id]);
+    const liveReady = !screen.liveManual || liveStarted;
+    useEffect(() => { setLiveOn(!focus); }, [focus]);
 
     // 여러 구간을 순서대로 확대해 짚어준 뒤 확대를 닫고 앵커로 마무리
     useEffect(() => {
@@ -267,11 +274,12 @@
       <div style={{ position: "relative", borderRadius: "var(--radius-card)", overflow: "hidden", border: "1px solid var(--border-subtle)", boxShadow: "var(--shadow-card)", background: "var(--surface-card)" }}>
         <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 12, padding: "12px 14px", borderBottom: "1px solid var(--border-subtle)", background: "var(--surface-card)" }}>
           <Toggle screen={screen} side={side} setSide={setSide} />
-          <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
+          <div style={{ display: "flex", alignItems: "center", gap: 10, flexWrap: "wrap", justifyContent: "flex-end" }}>
+            {!showLive &&
             <span style={{ fontSize: 12, color: "var(--text-faint)", display: "flex", alignItems: "center", gap: 6, whiteSpace: "nowrap" }}>
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><path d="M12 5v14M6 13l6 6 6-6"/></svg>
               스크롤하여 전체 보기
-            </span>
+            </span>}
             <button onClick={onFullscreen} style={{
               display: "inline-flex", alignItems: "center", gap: 7, cursor: "pointer",
               padding: "8px 14px", borderRadius: "var(--radius-pill)", border: "1px solid var(--border-default)",
@@ -281,6 +289,25 @@
             </button>
           </div>
         </div>
+        {showLive ?
+        (liveReady ?
+        <div style={{ position: "relative", overflow: "hidden", height: "calc(100vh - 250px)", minHeight: 360, background: "#fff" }}>
+          <iframe title={screen.title + " 라이브"} src={screen.live} style={{ position: "absolute", left: 0, top: -(screen.liveHideTop || 0), width: "100%", height: "calc(100% + " + (screen.liveHideTop || 0) + "px)", border: "none", background: "#fff" }}></iframe>
+        </div> :
+        <div style={{ height: "calc(100vh - 250px)", minHeight: 360, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: 18, background: "#2A2C30", padding: 24, textAlign: "center" }}>
+          <p style={{ margin: 0, fontSize: 15, lineHeight: 1.7, color: "rgba(255,255,255,.66)" }}>
+            시연 화면은 처음부터 재생돼야 하므로 자동 실행하지 않습니다.<br />'실행' 또는 '전체화면'을 누르면 로딩됩니다.
+          </p>
+          <div style={{ display: "flex", alignItems: "center", gap: 12, flexWrap: "wrap", justifyContent: "center" }}>
+            <button onClick={() => setLiveStarted(true)} style={{ display: "inline-flex", alignItems: "center", gap: 9, cursor: "pointer", fontFamily: "inherit", padding: "13px 30px", borderRadius: "var(--radius-pill)", border: "none", background: "var(--ws-mint)", color: "var(--ws-black)", fontSize: 15, fontWeight: 800 }}>
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z" /></svg>
+              실행
+            </button>
+            <button onClick={onFullscreen} style={{ display: "inline-flex", alignItems: "center", gap: 9, cursor: "pointer", fontFamily: "inherit", padding: "13px 26px", borderRadius: "var(--radius-pill)", border: "1px solid rgba(255,255,255,.28)", background: "rgba(255,255,255,.08)", color: "#fff", fontSize: 15, fontWeight: 800 }}>
+              <ExpandIcon /> 전체화면
+            </button>
+          </div>
+        </div>) :
         <div ref={scrollRef} style={{ position: "relative", maxHeight: "calc(100vh - 250px)", minHeight: 360, overflowY: "auto", background: "var(--gray-50)" }}>
           <div style={{ position: "relative" }}>
             <img src={s.src} alt={s.label} draggable={false} style={{ display: "block", width: "100%", height: "auto" }} />
@@ -288,8 +315,8 @@
             {fb && fb.box && !sweeping && <HighlightMark at={{ x: fb.box.x + fb.box.w / 2, y: (fb.zoomScrollTo != null && zoomOff === (focus && focus.key) ? fb.zoomScrollTo : fb.box.y) + fb.box.h / 2 }} label={fb.label} n={focus.idx + 1} tone={side === "tobe" ? "change" : "issue"} />}
           </div>
           {side === "asis" && <EndNote text={s.endNote} />}
-        </div>
-        {fb && fb.box && (fb.zoom || fb.zoomSeq) && zoomOff !== (focus && focus.key) &&
+        </div>}
+        {!showLive && fb && fb.box && (fb.zoom || fb.zoomSeq) && zoomOff !== (focus && focus.key) &&
         <ZoomFocus s={s} box={fb.zoomSeq ? fb.zoomSeq[Math.min(seqI, fb.zoomSeq.length - 1)].box : fb.box}
         label={fb.zoomSeq ? fb.zoomSeq[Math.min(seqI, fb.zoomSeq.length - 1)].label || fb.label : fb.label}
         n={focus.idx + 1} zoom={fb.zoom || 1} onClose={() => setZoomOff(focus.key)}
@@ -492,7 +519,8 @@
     useEffect(() => {
       const el = fsScrollRef.current; if (el) el.scrollTo({ top: 0, behavior: "auto" });
     }, [side]);
-    const isFilm = side === "tobe" && !!s.heroBanner;
+    const isFilm = side === "tobe" && !!s.heroBanner && !screen.live;
+    const isLive = side === "tobe" && !!screen.live;
     const isSplit = side === "tobe" && !!s.splitView;
 
     useEffect(() => {
@@ -505,7 +533,7 @@
     if (isFilm) return <HeroFilm data={s} onClose={onClose} onGo={onGo} />;
 
     return (
-      <div style={{ position: "fixed", inset: 0, zIndex: 900, background: "rgba(8,9,11,.94)", display: "flex", flexDirection: "column" }}>
+      <div style={{ position: "fixed", inset: 0, zIndex: 900, background: "#08090B", display: "flex", flexDirection: "column" }}>
         <div style={{ flexShrink: 0, display: "flex", alignItems: "center", justifyContent: "space-between", gap: 16, padding: "16px 22px", borderBottom: "1px solid rgba(255,255,255,.10)" }}>
           <div style={{ display: "flex", alignItems: "center", gap: 14, color: "#fff", minWidth: 0 }}>
             <strong style={{ fontSize: 16, letterSpacing: "-0.01em", whiteSpace: "nowrap" }}>{screen.title}</strong>
@@ -516,7 +544,11 @@
             <CloseBtn onClose={onClose} />
           </div>
         </div>
-        {isSplit ? <SplitView s={s} /> : (
+        {isLive ?
+          <div style={{ flex: 1, position: "relative", overflow: "hidden" }}>
+            <iframe title={screen.title + " 라이브"} src={screen.live} style={{ position: "absolute", left: 0, top: -(screen.liveHideTop || 0), width: "100%", height: "calc(100% + " + (screen.liveHideTop || 0) + "px)", border: "none", background: "#fff" }}></iframe>
+          </div> :
+         isSplit ? <SplitView s={s} /> : (
           <div ref={fsScrollRef} style={{ flex: 1, overflowY: "auto", position: "relative" }}>
             <div style={{ position: "relative", width: "100%", marginTop: 0 }}>
               <img src={s.src} alt={s.label} draggable={false} style={{ display: "block", width: "100%", height: "auto", background: "#fff" }} />

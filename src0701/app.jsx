@@ -272,6 +272,7 @@
   /* ---- 변화 / 개선 목록 (클릭 시 화면 영역으로 이동) ---- */
   function ChangeList({ side, screen, focus, onPick }) {
     const isTobe = side === "tobe";
+    const live = isTobe && !!screen.live;
     const items = (isTobe ? screen.changes : screen.issues) || [];
     const title = isTobe ? "주요 변화" : "개선이 필요한 사항";
     const accent = isTobe ? "var(--ws-mint)" : "#E0A23B";
@@ -284,6 +285,7 @@
         <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 12 }}>
           <span style={{ width: 7, height: 7, borderRadius: "50%", background: accent }}></span>
           <h3 style={{ margin: 0, fontSize: 15, fontWeight: 700, letterSpacing: "0.02em", color: "var(--text-strong)" }}>{title}</h3>
+          {live && <span style={{ fontSize: 11.5, color: "var(--text-faint)" }}>항목 클릭 시 설명 이미지로 전환</span>}
         </div>
         <div style={{ display: "flex", flexDirection: "column" }}>
           {items.map((it, i) => {
@@ -302,7 +304,8 @@
                   <strong style={{ fontSize: 14.5, color: "var(--text-strong)", letterSpacing: "-0.01em" }}>{it.label}</strong>
                   <p style={{ margin: "3px 0 0", fontSize: 13, lineHeight: 1.55, color: "var(--text-muted)", whiteSpace: "pre-line" }}>{it.desc}</p>
                 </div>
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke={on ? accent : "var(--text-faint)"} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ flexShrink: 0, marginTop: 3 }}><path d="M5 12h14M13 6l6 6-6 6" /></svg>
+                {true &&
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke={on ? accent : "var(--text-faint)"} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ flexShrink: 0, marginTop: 3 }}><path d="M5 12h14M13 6l6 6-6 6" /></svg>}
               </button>);
 
           })}
@@ -316,10 +319,31 @@
     const [side, _setSide] = useState("asis");
     const [focus, setFocus] = useState(null);
     const setSide = (v) => {_setSide(v);setFocus(null);};
+    const [live, setLive] = useState(false);
+    React.useEffect(() => {
+      if (!live) return;
+      const onKey = (e) => { if (e.key === "Escape") setLive(false); };
+      window.addEventListener("keydown", onKey);
+      const prev = document.body.style.overflow; document.body.style.overflow = "hidden";
+      return () => { window.removeEventListener("keydown", onKey); document.body.style.overflow = prev; };
+    }, [live]);
     return (
       <React.Fragment>
+        {live &&
+        <div style={{ position: "fixed", inset: 0, zIndex: 900, display: "flex", flexDirection: "column", background: "#08090B" }}>
+          <div style={{ flexShrink: 0, display: "flex", alignItems: "center", justifyContent: "space-between", gap: 16, padding: "14px 20px", borderBottom: "1px solid rgba(255,255,255,.10)" }}>
+            <div style={{ display: "flex", alignItems: "center", gap: 12, color: "#fff" }}>
+              <span style={{ fontSize: 11, fontWeight: 700, color: "var(--ws-black)", background: "var(--ws-mint)", padding: "3px 10px", borderRadius: 999 }}>리뉴얼</span>
+              <strong style={{ fontSize: 15 }}>메인 HOME 라이브 시연</strong>
+            </div>
+            <button onClick={() => setLive(false)} aria-label="닫기" style={{ width: 40, height: 40, borderRadius: "50%", cursor: "pointer", background: "rgba(255,255,255,.12)", border: "1px solid rgba(255,255,255,.2)", color: "#fff", display: "flex", alignItems: "center", justifyContent: "center" }}>
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><path d="M6 6l12 12M18 6L6 18" /></svg>
+            </button>
+          </div>
+          <iframe title="메인 HOME 라이브 시연" src={screen.live} style={{ flex: 1, width: "100%", border: "none", background: "#fff" }}></iframe>
+        </div>}
         <div style={{ display: "grid", gridTemplateColumns: "minmax(0,1.55fr) minmax(280px,1fr)", gap: 32, alignItems: "start" }}>
-          <ScreenViewer screen={screen} side={side} setSide={setSide} onFullscreen={() => onFullscreen(side, setSide)} focus={focus} onFocusIdx={(i) => setFocus({ idx: i, key: Date.now() })} />
+          <ScreenViewer screen={screen} side={side} setSide={setSide} onLive={() => setLive(true)} onFullscreen={() => onFullscreen(side, setSide)} focus={focus} onFocusIdx={(i) => setFocus({ idx: i, key: Date.now() })} />
           <div style={{ position: "sticky", top: 24 }}>
             <ChangeList side={side} screen={screen} focus={focus} onPick={(i) => setFocus((f) => f && f.idx === i ? null : { idx: i, key: Date.now() })} />
           </div>
@@ -1204,9 +1228,8 @@
     const steps = [
       { m: "3월", s: "착수", state: "done" },
       { m: "4~8월", s: "구현", state: "done" },
-      { m: "8월 5주차", s: "기능 테스트", state: "now" },
-      { m: "9/1~", s: "보안점검", state: "done" },
-      { m: "9/14", s: "오픈", state: "goal" },
+      { m: "9월 1주~", s: "기능 테스트 및 보안점검", state: "now" },
+      { m: "9/21", s: "오픈", state: "goal" },
       { m: "+4주", s: "안정화", state: "next" },
     ];
     const [tab, setTab] = useState("renewal");
@@ -1234,11 +1257,11 @@
                 { t: "닷컴 유지보수 인력 활용, 추가 예산 없이 개발 진행" },
                 { t: "안정적인 시스템 전환 최우선, UX/콘텐츠 순차 개선 예정" },
               ]},
-              { head: "9/14(월) 오픈 목표" },
+              { head: "9/21(월) 오픈 목표" },
             ]} />
             <div style={{ margin: "22px 0 0", padding: "6px 4px 0" }}>
-              <div style={{ position: "relative", display: "grid", gridTemplateColumns: "repeat(6, 1fr)", alignItems: "start" }}>
-                <div style={{ position: "absolute", left: "8%", right: "12%", top: 15, height: 2, background: "var(--ws-blue, #022452)" }}></div>
+              <div style={{ position: "relative", display: "grid", gridTemplateColumns: "repeat(5, 1fr)", alignItems: "start" }}>
+                <div style={{ position: "absolute", left: "10%", right: "10%", top: 15, height: 2, background: "var(--ws-blue, #022452)" }}></div>
                 {steps.map((s) =>
                   <div key={s.m} style={{ position: "relative", display: "flex", flexDirection: "column", alignItems: "center", gap: 7 }}>
                     {s.state === "now" && <span style={{ position: "absolute", top: -16, whiteSpace: "nowrap", fontSize: 11, fontWeight: 700, color: "var(--text-strong)" }}>현재 ▾</span>}
@@ -1246,7 +1269,7 @@
                       background: s.state === "now" ? "#fff" : s.state === "next" ? "var(--gray-300, #cfd4dc)" : "var(--ws-blue, #022452)",
                       border: s.state === "now" ? "2.5px solid var(--ws-blue, #022452)" : "none", marginTop: s.state === "now" || s.state === "goal" ? 7 : 10 }}></span>
                     <span style={{ fontSize: 13, fontWeight: 800, color: s.state === "next" ? "var(--text-faint)" : "var(--text-strong)" }}>{s.m}</span>
-                    <span style={{ fontSize: 11, fontWeight: 500, textAlign: "center", color: "var(--text-muted)" }}>{s.s}</span>
+                    <span style={{ fontSize: 11, fontWeight: 500, textAlign: "center", whiteSpace: "nowrap", color: "var(--text-muted)" }}>{s.s}</span>
                   </div>)}
               </div>
             </div>

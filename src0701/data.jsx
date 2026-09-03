@@ -12,6 +12,8 @@
   const SCREENS = {
     home: {
       id: "home", type: "shot",
+      live: "https://namuhx-web-test.mock.pe.kr/",
+      liveHideTop: 145, liveManual: true,
       kicker: "메인 / 홈",
       title: "메인 HOME",
       desc: "보안 프로모션 배너 중심의 고도몰에서, 브랜드 필름과 기능/커뮤니티 서사를 전면에 둔 구성으로 바뀝니다.",
@@ -31,6 +33,8 @@
     },
     store: {
       id: "store", type: "shot",
+      live: "https://namuhx-web-test.mock.pe.kr/products",
+      liveHideTop: 145,
       kicker: "스토어 / 홈",
       title: "스토어 홈 / Shop",
       desc: "단순 상품 그리드(고도몰 Shop)에서, 구독을 중심에 둔 완결형 커머스 허브로. 페이지 길이 차이가 곧 경험의 차이입니다.",
@@ -249,6 +253,8 @@
     },
     brandstory: {
       id: "brandstory", type: "shot",
+      live: "https://namuhx-web-test.mock.pe.kr/brand/story",
+      liveHideTop: 145,
       kicker: "브랜드 / 브랜드 스토리",
       title: "브랜드 스토리",
       desc: "정적 이미지와 설명문 중심의 고도몰 브랜드 소개에서, 브랜드 필름과 타이포 서사로 몰입을 만드는 시네마틱 구성으로 바뀝니다.",
@@ -263,6 +269,8 @@
     },
     brandasset: {
       id: "brandasset", type: "shot",
+      live: "https://namuhx-web-test.mock.pe.kr/brand/assets",
+      liveHideTop: 145,
       kicker: "브랜드 / 브랜드 자산",
       title: "브랜드 자산",
       desc: "라이트 UI 위 아카이브식 나열에서, 브랜드 필름/다크 무드/사이드 내비게이션을 갖춘 몰입형 자산 페이지로 바뀝니다.",
@@ -415,10 +423,22 @@
       desc: "리뉴얼에 반영되는 페이지입니다. 고도몰 구성과 흡사해 비교 없이 리뉴얼 화면만 노출합니다. 브랜드 필름 → 릴레이 숏폼 → 셀럽/인플루언서 영상 리뷰 → 나무엑스 꾸미기 참여 유도까지, 로봇과 사는 일상을 영상 중심으로 이어 붙였습니다.",
     },
     imagine: {
-      id: "imagine", type: "page", stageTag: "고도몰",
+      id: "imagine", type: "shot",
       kicker: "함께 만드는 로봇 시대",
       title: "나무엑스 꾸미기",
-      src: "assets/imagine.jpg", ratio: 11841 / 2940,
+      desc: "안내문 중심의 이벤트 게시글에서, 참여 단계와 프롬프트, 응모 갤러리를 한 페이지에 담은 참여형 캠페인 페이지로 바뀝니다.",
+      asis: { src: "assets/imagine.jpg", ratio: 11841 / 2940, tag: "AS-IS", label: "고도몰", caption: "이벤트 안내 게시글 형태 — 참여 흐름이 글로만 설명됨" },
+      tobe: { src: "나무엑스 꾸미기_260828_평시_PC.png".normalize("NFC"), ratio: 2578 / 972, tag: "TO-BE", label: "리뉴얼", caption: "참여방법 4단계 → 프롬프트 제공 → SNS 가산점 → 나꾸 갤러리" },
+      issues: [
+        { label: "참여 방법 — 텍스트 안내 위주", desc: "무엇을 어떻게 하는지 글로만 설명되어 진입 장벽이 높음" },
+        { label: "응모 결과 — 노출 지면 부재", desc: "참여작을 볼 수 있는 공간이 없어 확산 동력이 약함" },
+      ],
+      changes: [
+        { label: "참여방법 — 4단계 시각화", desc: "이미지 다운로드 → AI 서비스에 불러오기 → 스타일 입히기 → 응모하기" },
+        { label: "프롬프트 제공", desc: "공통 프롬프트(필수)와 꾸미기 예시를 복사해 바로 사용" },
+        { label: "SNS 가산점 안내", desc: "인스타그램, 네이버 블로그, 필수 해시태그를 한 블록에 정리" },
+        { label: "나꾸 갤러리", desc: "응모작을 카드 그리드로 노출하고 정렬, 페이지네이션 제공" },
+      ],
     },
     roboEraHub: {
       id: "roboEraHub", type: "naming",
